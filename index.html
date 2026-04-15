@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Molecular AI Viewer — Laboratory Bench</title>
+    <meta name="description" content="Interactive 3D molecular viewer with bond angle calculation, space-filling toggle, and SDF export. Powered by PubChem and 3Dmol.js.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ══════════════════ HEADER ══════════════════ -->
+    <header class="lab-header">
+        <div class="header-inner">
+            <div class="lab-logo">
+                <div class="logo-icon">⬡</div>
+                <div class="logo-text">
+                    <span class="logo-main">MolecularAI</span>
+                    <span class="logo-sub">Laboratory Bench</span>
+                </div>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- ══════════════════ MAIN BENCH ══════════════════ -->
+    <main class="bench-main">
+        <div class="bench-inner">
+
+            <!-- SEARCH TOOLBAR -->
+            <div class="bench-toolbar">
+                <div class="toolbar-left">
+                    <span class="toolbar-label">🔍 Search Molecule</span>
+                    <div class="search-group">
+                        <input type="text" id="mol-search" class="mol-search" placeholder="Search by name, formula, or IUPAC name...">
+                        <button id="search-btn" class="search-btn">Search</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ERROR MESSAGE -->
+            <div id="search-error" class="error-bar"></div>
+
+            <!-- MAIN BENCH GRID -->
+            <div class="bench-grid">
+
+                <!-- ── LEFT PANEL: Data ── -->
+                <aside class="data-panel">
+
+                    <!-- Molecule Identity -->
+                    <div class="panel-card">
+                        <div class="panel-card-header">
+                            <span class="card-icon">🔬</span>
+                            <span>Molecule Identity</span>
+                        </div>
+                        <div class="identity-display">
+                            <div class="mol-name-large" id="mol-name-display">Caffeine</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;">IUPAC Name</div>
+                            <div class="mol-iupac" id="iupac-name">Loading...</div>
+                        </div>
+                        <div class="data-rows">
+                            <div class="data-row">
+                                <span class="drow-label">Formula</span>
+                                <span class="drow-val mono" id="formula">—</span>
+                            </div>
+                            <div class="data-row">
+                                <span class="drow-label">Molar Mass</span>
+                                <span class="drow-val mono accent" id="mass">—</span>
+                            </div>
+                            <div class="data-row">
+                                <span class="drow-label">PubChem CID</span>
+                                <span class="drow-val mono" id="pub-cid">—</span>
+                            </div>
+                            <div class="data-row">
+                                <span class="drow-label">SMILES</span>
+                                <span class="drow-val mono smiles-val" id="smiles-val">—</span>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Bond Angle Calculator -->
+                    <div class="panel-card">
+                        <div class="panel-card-header">
+                            <span class="card-icon">📐</span>
+                            <span>Bond Angle Calculator</span>
+                        </div>
+                        <p class="card-hint">Click exactly <strong>3 atoms</strong> in the 3D viewer to measure the angle between them.</p>
+                        <div class="atom-slots">
+                            <div class="atom-slot-box" id="slot-1">
+                                <div class="slot-num">A1</div>
+                                <div class="slot-val" id="atom-1">—</div>
+                            </div>
+                            <div class="slot-arrow">∠</div>
+                            <div class="atom-slot-box" id="slot-2">
+                                <div class="slot-num">A2</div>
+                                <div class="slot-val" id="atom-2">—</div>
+                            </div>
+                            <div class="slot-arrow">∠</div>
+                            <div class="atom-slot-box" id="slot-3">
+                                <div class="slot-num">A3</div>
+                                <div class="slot-val" id="atom-3">—</div>
+                            </div>
+                        </div>
+                        <div class="angle-result" id="angle-result">
+                            <span class="angle-label">Calculated Angle</span>
+                            <span class="angle-value" id="angle-value">WAITING</span>
+                        </div>
+                        <button id="reset-angle-btn" class="btn-secondary full-w">↺ Reset Atoms</button>
+                    </div>
+
+                    <!-- Molecular Properties & Predictions -->
+                    <div class="panel-card">
+                        <div class="panel-card-header">
+                            <span class="card-icon">🔮</span>
+                            <span>Properties & Predictions</span>
+                        </div>
+                        
+                        <!-- Drug-Likeness -->
+                        <div class="pred-section">
+                            <div class="pred-label">💊 Drug-Likeness</div>
+                            <div class="pred-badge" id="drug-likeness-badge">Analyzing...</div>
+                            <div class="pred-details" id="drug-likeness-details"></div>
+                        </div>
+
+                        <!-- Solubility -->
+                        <div class="pred-section">
+                            <div class="pred-label">💧 Solubility</div>
+                            <div class="pred-value" id="solubility-pred">Analyzing...</div>
+                            <div class="pred-score-bar">
+                                <div class="score-fill" id="solubility-bar" style="width: 50%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Toxicity Risk -->
+                        <div class="pred-section">
+                            <div class="pred-label">☠️ Toxicity Risk</div>
+                            <div class="pred-value" id="toxicity-pred">Analyzing...</div>
+                            <div class="pred-score-bar">
+                                <div class="score-fill warning" id="toxicity-bar" style="width: 30%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Bioavailability -->
+                        <div class="pred-section">
+                            <div class="pred-label">🫀 Bioavailability</div>
+                            <div class="pred-value" id="bioavail-pred">Analyzing...</div>
+                            <div class="pred-score-bar">
+                                <div class="score-fill" id="bioavail-bar" style="width: 65%"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Molecular Features Analysis -->
+                    <div class="panel-card">
+                        <div class="panel-card-header">
+                            <span class="card-icon">🧬</span>
+                            <span>Molecular Feature Analysis</span>
+                        </div>
+                        
+                        <!-- Atom Composition -->
+                        <div id="atom-composition" class="feat-section" style="display:none; margin-bottom: 20px;">
+                            <div class="feat-title">⚛️ Atom Composition</div>
+                            <div class="atom-grid" id="atom-grid"></div>
+                        </div>
+                        
+                        <!-- Molecular Descriptors -->
+                        <div id="descriptors-section" class="feat-section" style="display:none; margin-bottom: 20px;">
+                            <div class="feat-title">📊 Molecular Descriptors</div>
+                            <div class="desc-grid" id="desc-grid"></div>
+                        </div>
+                        
+                        <!-- Lipinski Rule of Five -->
+                        <div id="lipinski-section" class="feat-section" style="display:none; margin-bottom: 20px;">
+                            <div class="feat-title">📋 Lipinski Rule of Five</div>
+                            <div class="lipinski-grid" id="lipinski-grid"></div>
+                        </div>
+                        
+                        <!-- Functional Groups -->
+                        <div id="funcgroup-section" class="feat-section" style="display:none; margin-bottom: 20px;">
+                            <div class="feat-title">🔗 Functional Groups</div>
+                            <div class="funcgroup-list" id="funcgroup-list"></div>
+                        </div>
+
+                    </div>
+
+                </aside>
+
+                <!-- ── RIGHT PANEL: 3D Viewer ── -->
+                <section class="viewer-panel">
+                    <!-- Viewer Overlay Header -->
+                    <div class="viewer-overlay-top">
+                        <div class="viewer-title-group">
+                            <span class="viewer-title">AI Generated 3D Structure</span>
+                            <div class="live-indicator">
+                                <span class="live-dot"></span>
+                                Live
+                            </div>
+                        </div>
+                        <div class="viewer-controls">
+                            <button id="toggle-style" class="vctrl-btn active">Ball-and-Stick</button>
+                            <button id="toggle-ribbon" class="vctrl-btn">Wire Ribbon</button>
+                            <button id="toggle-bg" class="vctrl-btn">Dark BG</button>
+                            <button id="reset-view-btn" class="vctrl-btn">Reset View</button>
+                        </div>
+                    </div>
+
+                    <!-- 3D container -->
+                    <div id="container-01" class="mol-container"></div>
+
+                    <!-- Viewer Overlay Footer -->
+                    <div class="viewer-overlay-bottom">
+                        <span class="viewer-hint">🖱 Drag to rotate · Scroll to zoom · Click atom to select</span>
+                        <span class="viewer-mol-tag" id="viewer-mol-tag">No molecule loaded</span>
+                    </div>
+                </section>
+
+            </div><!-- /bench-grid -->
+        </div><!-- /bench-inner -->
+    </main>
+
+    <!-- ══════════════════ FOOTER ══════════════════ -->
+    <footer class="lab-footer">
+        <div class="footer-inner">
+            <span>MolecularAI Laboratory Bench</span>
+            <span class="footer-sep">·</span>
+            <span>Powered by <a href="https://pubchem.ncbi.nlm.nih.gov" target="_blank">PubChem</a> & <a href="https://3dmol.csb.pitt.edu" target="_blank">3Dmol.js</a></span>
+            <span class="footer-sep">·</span>
+            <span>Data: NCBI Open Access</span>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

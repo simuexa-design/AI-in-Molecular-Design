@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Display Functions</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div style="max-width: 1200px; margin: 20px auto; padding: 20px;">
+        <h1>Display Functions Test</h1>
+        
+        <div class="panel-card" style="margin-bottom: 20px;">
+            <div class="panel-card-header">
+                <span>Test: RDKit Feature Analysis</span>
+            </div>
+            
+            <!-- Atom Composition -->
+            <div id="atom-composition" class="feat-section" style="display:none; margin-bottom: 20px;">
+                <div class="feat-title">⚛️ Atom Composition</div>
+                <div class="atom-grid" id="atom-grid"></div>
+            </div>
+            
+            <!-- Descriptors -->
+            <div id="descriptors-section" class="feat-section" style="display:none; margin-bottom: 20px;">
+                <div class="feat-title">📊 Molecular Descriptors</div>
+                <div class="desc-grid" id="desc-grid"></div>
+            </div>
+            
+            <!-- Lipinski -->
+            <div id="lipinski-section" class="feat-section" style="display:none; margin-bottom: 20px;">
+                <div class="feat-title">📋 Lipinski Rule of Five</div>
+                <div class="lipinski-grid" id="lipinski-grid"></div>
+            </div>
+            
+            <!-- Functional Groups -->
+            <div id="funcgroup-section" class="feat-section" style="display:none; margin-bottom: 20px;">
+                <div class="feat-title">🔗 Functional Groups</div>
+                <div class="funcgroup-list" id="funcgroup-list"></div>
+            </div>
+        </div>
+        
+        <button onclick="testDisplay()" style="padding: 10px 20px; font-size: 16px; cursor: pointer;">
+            Run Test Display
+        </button>
+    </div>
+
+    <script>
+        console.log("Test page loaded");
+        
+        function displayAtomComposition(composition) {
+            console.log("[Test] displayAtomComposition called with:", composition);
+            if (!composition) {
+                console.log("[Test] Composition is empty, returning");
+                return;
+            }
+
+            const section = document.getElementById("atom-composition");
+            const grid = document.getElementById("atom-grid");
+            
+            console.log("[Test] Section element found:", !!section);
+            console.log("[Test] Grid element found:", !!grid);
+            
+            if (!grid) {
+                console.error("[Test] Grid not found!");
+                return;
+            }
+
+            grid.innerHTML = "";
+            Object.entries(composition)
+                .sort((a, b) => b[1] - a[1])
+                .forEach(([atom, count]) => {
+                    const card = document.createElement("div");
+                    card.className = "atom-card";
+                    card.innerHTML = `
+                        <div class="atom-symbol">${atom}</div>
+                        <div class="atom-count">×${count}</div>
+                    `;
+                    grid.appendChild(card);
+                });
+
+            if (section) {
+                section.style.display = "block";
+                console.log("[Test] Atom composition section shown");
+            }
+        }
+
+        function displayDescriptorsLocal(descriptors) {
+            console.log("[Test] displayDescriptorsLocal called with:", descriptors);
+            if (!descriptors) return;
+
+            const section = document.getElementById("descriptors-section");
+            const grid = document.getElementById("desc-grid");
+            
+            if (!grid) return;
+
+            grid.innerHTML = "";
+            const names = {
+                molar_weight: "Molar Weight",
+                log_p: "LogP",
+                tpsa: "TPSA",
+                molar_refractivity: "Molar Refractivity",
+                sp3_fraction: "Sp³ Fraction"
+            };
+
+            Object.entries(descriptors).forEach(([key, value]) => {
+                const item = document.createElement("div");
+                item.className = "desc-item";
+                item.innerHTML = `
+                    <div class="desc-name">${names[key] || key}</div>
+                    <div class="desc-value">${typeof value === 'number' ? value.toFixed(2) : value}</div>
+                `;
+                grid.appendChild(item);
+            });
+
+            if (section) {
+                section.style.display = "block";
+                console.log("[Test] Descriptors section shown");
+            }
+        }
+
+        function displayLipinski(lipinski) {
+            console.log("[Test] displayLipinski called with:", lipinski);
+            if (!lipinski) return;
+
+            const section = document.getElementById("lipinski-section");
+            const grid = document.getElementById("lipinski-grid");
+            
+            if (!grid) return;
+
+            grid.innerHTML = "";
+            const names = {
+                h_donors: "H-Donors",
+                h_acceptors: "H-Acceptors",
+                rotatable_bonds: "Rotatable Bonds",
+                aromatic_rings: "Aromatic Rings",
+                aliphatic_rings: "Aliphatic Rings",
+                saturated_rings: "Saturated Rings"
+            };
+
+            Object.entries(lipinski).forEach(([key, value]) => {
+                const item = document.createElement("div");
+                item.className = "lipinski-item";
+                item.innerHTML = `
+                    <div class="lipinski-name">${names[key] || key}</div>
+                    <div class="lipinski-value">${Math.round(value)}</div>
+                `;
+                grid.appendChild(item);
+            });
+
+            if (section) {
+                section.style.display = "block";
+                console.log("[Test] Lipinski section shown");
+            }
+        }
+
+        function displayFunctionalGroups(groups) {
+            console.log("[Test] displayFunctionalGroups called with:", groups);
+            if (!groups || groups.length === 0) {
+                const section = document.getElementById("funcgroup-section");
+                if (section) section.style.display = "none";
+                return;
+            }
+
+            const section = document.getElementById("funcgroup-section");
+            const list = document.getElementById("funcgroup-list");
+            
+            if (!list) return;
+
+            list.innerHTML = "";
+            groups
+                .sort((a, b) => b.count - a.count)
+                .forEach(group => {
+                    const item = document.createElement("div");
+                    item.className = "funcgroup-item";
+                    item.innerHTML = `
+                        <div class="funcgroup-name">${group.name}</div>
+                        <div class="funcgroup-badge">×${group.count}</div>
+                    `;
+                    list.appendChild(item);
+                });
+
+            if (section) {
+                section.style.display = "block";
+                console.log("[Test] Functional groups section shown");
+            }
+        }
+
+        function testDisplay() {
+            console.log("=== STARTING TEST ===");
+            
+            // Test data
+            const atomCounts = { C: 8, H: 10, N: 4, O: 2 };
+            const descriptors = {
+                molar_weight: 194.19,
+                log_p: -0.45,
+                tpsa: 49.1,
+                molar_refractivity: 48.5,
+                sp3_fraction: 0.33
+            };
+            const lipinski = {
+                h_donors: 2,
+                h_acceptors: 3,
+                rotatable_bonds: 0,
+                aromatic_rings: 2,
+                aliphatic_rings: 0,
+                saturated_rings: 0
+            };
+            const functionalGroups = [
+                { name: "Benzene", count: 1 },
+                { name: "Amine", count: 2 }
+            ];
+            
+            console.log("Test data prepared");
+            
+            displayAtomComposition(atomCounts);
+            displayDescriptorsLocal(descriptors);
+            displayLipinski(lipinski);
+            displayFunctionalGroups(functionalGroups);
+            
+            console.log("=== TEST COMPLETE ===");
+        }
+    </script>
+</body>
+</html>
