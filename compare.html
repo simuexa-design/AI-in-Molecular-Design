@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comparison View — Obsidian Labs</title>
+    <meta name="description" content="Cross-reference molecular analysis in a side-by-side technical comparison view.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+    <link rel="stylesheet" href="compare.css">
+</head>
+<body class="obsidian-lab">
+
+    <!-- ── NAVIGATION HEADER ── -->
+    <header class="lab-header">
+        <div class="header-inner">
+            <div class="lab-logo">
+                <span class="logo-text">OBSIDIAN_LAB</span>
+            </div>
+            <nav class="header-nav">
+                <a href="index.html">Workbench</a>
+                <a href="#">Library</a>
+                <a href="#" class="active">Analysis</a>
+                <a href="#">History</a>
+            </nav>
+            <div class="header-tools">
+                <div class="search-mini">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="global-search" placeholder="Global chemical search...">
+                </div>
+                <div class="tool-icons">
+                    <span class="icon">🔔</span>
+                    <span class="icon">⚙️</span>
+                    <div class="user-avatar"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="layout-wrapper">
+        <!-- ── SIDEBAR ── -->
+        <aside class="lab-sidebar">
+            <div class="project-info">
+                <div class="project-dot"></div>
+                <div class="project-meta">
+                    <span class="p-title">PROJECT ALPHA</span>
+                    <span class="p-sub">MOLECULAR SYNTHESIS</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item">
+                    <span class="n-icon">🔬</span> Viewport
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="n-icon">📊</span> Properties
+                </a>
+                <a href="#" class="nav-item active">
+                    <span class="n-icon">🔳</span> Symmetry
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="n-icon">📏</span> Z-Matrix
+                </a>
+                <a href="#" class="nav-item">
+                    <span class="n-icon">📥</span> Export
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="btn-new-exp">NEW EXPERIMENT</button>
+                <div class="footer-links">
+                    <a href="#"><span class="f-icon">📖</span> DOCUMENTATION</a>
+                    <a href="#"><span class="f-icon">❓</span> SUPPORT</a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ── MAIN CONTENT ── -->
+        <main class="lab-content">
+            <header class="content-header">
+                <div class="view-title">
+                    <h1>COMPARISON VIEW</h1>
+                    <span class="view-sub">CROSS-REFERENCE ANALYSIS :: ALGO-V3.4</span>
+                </div>
+                <div class="header-actions">
+                    <button id="sync-viewports" class="btn-action">SYNC VIEWPORTS</button>
+                    <button id="generate-report" class="btn-primary">GENERATE REPORT</button>
+                </div>
+            </header>
+
+            <div class="comparison-grid">
+                
+                <!-- MOLECULE SLOT 1 -->
+                <section class="molecule-slot" id="slot-1">
+                    <div class="mol-identity-card">
+                        <div class="mol-header">
+                            <div class="mol-name-group">
+                                <h2 class="mol-name" id="mol-name-1">Loading...</h2>
+                                <p class="mol-iupac" id="mol-iupac-1">---</p>
+                            </div>
+                            <div class="mol-search-box">
+                                <input type="text" id="input-1" placeholder="Swap molecule...">
+                                <span class="search-swap">⇌</span>
+                            </div>
+                        </div>
+                        <div class="mol-meta-row">
+                            <span class="mol-formula" id="mol-formula-1">---</span>
+                            <span class="mol-mass" id="mol-mass-1">---</span>
+                        </div>
+                    </div>
+
+                    <div class="viewer-container">
+                        <div class="viewer-header">
+                            <div class="badge-group">
+                                <span class="badge">BOND ANGLE CALCULATOR</span>
+                                <div class="atom-select-pill" id="pill-1">
+                                    <span class="s-dot">?</span> — <span class="s-dot">?</span> — <span class="s-dot">?</span>
+                                    <span class="s-val">---°</span>
+                                </div>
+                            </div>
+                            <div class="theme-toggle">🌙</div>
+                        </div>
+                        <div id="container-1" class="mol-viewport"></div>
+                        <div class="viewer-footer">
+                            <button class="v-toggle active" id="ball-1">BALL-AND-STICK</button>
+                            <button class="v-toggle" id="ribbon-1">WIRE RIBBON</button>
+                        </div>
+                    </div>
+
+                    <div class="section-label">RDKIT MOLECULAR DESCRIPTORS</div>
+                    <div class="descriptors-row">
+                        <div class="desc-item">
+                            <span class="d-label">LOGP</span>
+                            <span class="d-val" id="logp-1">-.-</span>
+                        </div>
+                        <div class="desc-item">
+                            <span class="d-label">TPSA</span>
+                            <span class="d-val" id="tpsa-1">-.- Å²</span>
+                        </div>
+                        <div class="desc-item">
+                            <span class="d-label">LIPINSKI</span>
+                            <span class="d-val" id="lipinski-1">---</span>
+                        </div>
+                    </div>
+
+                    <div class="dual-props-row">
+                        <div class="props-card">
+                            <div class="section-label">PREDICTIONS</div>
+                            <div class="prop-stat">
+                                <span class="ps-label">Solubility</span>
+                                <span class="ps-badge" id="solub-1">---</span>
+                            </div>
+                            <div class="prop-stat">
+                                <span class="ps-label">Toxicity</span>
+                                <span class="ps-badge" id="tox-1">---</span>
+                            </div>
+                            <div class="prop-stat">
+                                <span class="ps-label">Drug-likeness</span>
+                                <span class="ps-val" id="drug-1">---</span>
+                            </div>
+                        </div>
+                        <div class="zmatrix-card">
+                            <div class="section-label">Z-MATRIX COORDINATES</div>
+                            <table class="z-table">
+                                <thead>
+                                    <tr>
+                                        <th>Atom</th>
+                                        <th>Dist</th>
+                                        <th>Angle</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="zmatrix-tbody-1">
+                                    <!-- Rows populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MOLECULE SLOT 2 -->
+                <section class="molecule-slot" id="slot-2">
+                    <div class="mol-identity-card border-blue">
+                        <div class="mol-header">
+                            <div class="mol-name-group">
+                                <h2 class="mol-name text-blue" id="mol-name-2">Loading...</h2>
+                                <p class="mol-iupac" id="mol-iupac-2">---</p>
+                            </div>
+                            <div class="mol-search-box border-blue">
+                                <input type="text" id="input-2" placeholder="Swap molecule...">
+                                <span class="search-swap">⇌</span>
+                            </div>
+                        </div>
+                        <div class="mol-meta-row">
+                            <span class="mol-formula" id="mol-formula-2">---</span>
+                            <span class="mol-mass" id="mol-mass-2">---</span>
+                        </div>
+                    </div>
+
+                    <div class="viewer-container">
+                        <div class="viewer-header">
+                            <div class="badge-group">
+                                <span class="badge text-blue">BOND ANGLE CALCULATOR</span>
+                                <div class="atom-select-pill border-blue" id="pill-2">
+                                    <span class="s-dot bg-blue">?</span> — <span class="s-dot bg-blue">?</span> — <span class="s-dot bg-blue">?</span>
+                                    <span class="s-val text-blue">---°</span>
+                                </div>
+                            </div>
+                            <div class="theme-toggle">🌙</div>
+                        </div>
+                        <div id="container-2" class="mol-viewport"></div>
+                        <div class="viewer-footer">
+                            <button class="v-toggle active blue-active" id="ball-2">BALL-AND-STICK</button>
+                            <button class="v-toggle" id="ribbon-2">WIRE RIBBON</button>
+                        </div>
+                    </div>
+
+                    <div class="section-label text-blue-muted">RDKIT MOLECULAR DESCRIPTORS</div>
+                    <div class="descriptors-row">
+                        <div class="desc-item">
+                            <span class="d-label">LOGP</span>
+                            <span class="d-val" id="logp-2">-.-</span>
+                        </div>
+                        <div class="desc-item">
+                            <span class="d-label">TPSA</span>
+                            <span class="d-val" id="tpsa-2">-.- Å²</span>
+                        </div>
+                        <div class="desc-item">
+                            <span class="d-label">LIPINSKI</span>
+                            <span class="d-val" id="lipinski-2">---</span>
+                        </div>
+                    </div>
+
+                    <div class="dual-props-row">
+                        <div class="props-card">
+                            <div class="section-label text-blue-muted">PREDICTIONS</div>
+                            <div class="prop-stat">
+                                <span class="ps-label">Solubility</span>
+                                <span class="ps-badge" id="solub-2">---</span>
+                            </div>
+                            <div class="prop-stat">
+                                <span class="ps-label">Toxicity</span>
+                                <span class="ps-badge" id="tox-2">---</span>
+                            </div>
+                            <div class="prop-stat">
+                                <span class="ps-label">Drug-likeness</span>
+                                <span class="ps-val" id="drug-2">---</span>
+                            </div>
+                        </div>
+                        <div class="zmatrix-card">
+                            <div class="section-label text-blue-muted">Z-MATRIX COORDINATES</div>
+                            <table class="z-table">
+                                <thead>
+                                    <tr>
+                                        <th>Atom</th>
+                                        <th>Dist</th>
+                                        <th>Angle</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="zmatrix-tbody-2">
+                                    <!-- Rows populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <script src="compare.js"></script>
+</body>
+</html>
