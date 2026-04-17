@@ -66,6 +66,15 @@ body.obsidian-lab {
     color: var(--primary);
 }
 
+.logo-link {
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.logo-link:hover {
+    opacity: 0.8;
+}
+
 .header-nav {
     display: flex;
     gap: 32px;
@@ -139,129 +148,10 @@ body.obsidian-lab {
     flex: 1;
 }
 
-/* ── SIDEBAR ── */
-.lab-sidebar {
-    width: 240px;
-    background: var(--sidebar-bg);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 64px;
-    bottom: 0;
-    padding: 24px 0;
-}
-
-.project-info {
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 40px;
-}
-
-.project-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--primary);
-    border-radius: 50%;
-    box-shadow: 0 0 10px var(--primary);
-}
-
-.project-meta {
-    display: flex;
-    flex-direction: column;
-}
-
-.p-title {
-    font-family: var(--display);
-    font-weight: 700;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    color: var(--text);
-}
-
-.p-sub {
-    font-size: 0.6rem;
-    color: var(--text-muted);
-    font-weight: 600;
-}
-
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
-}
-
-.nav-item {
-    padding: 14px 24px;
-    text-decoration: none;
-    color: var(--text-dim);
-    font-family: var(--display);
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: all 0.2s;
-}
-
-.nav-item:hover, .nav-item.active {
-    background: var(--card-bg-high);
-    color: var(--text);
-}
-
-.nav-item.active {
-    color: var(--primary);
-    border-left: 3px solid var(--primary);
-}
-
-.sidebar-footer {
-    margin-top: auto;
-    padding: 0 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.btn-new-exp {
-    width: 100%;
-    background: var(--primary);
-    color: #00643e;
-    border: none;
-    padding: 12px;
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: 0.7rem;
-    letter-spacing: 0.15em;
-    border-radius: 2px;
-    cursor: pointer;
-    transition: filter 0.2s;
-}
-
-.btn-new-exp:hover { filter: brightness(1.1); }
-
-.footer-links {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.footer-links a {
-    text-decoration: none;
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: var(--text-muted);
-    letter-spacing: 0.1em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
 /* ── CONTENT ── */
 .lab-content {
-    margin-left: 240px;
+    max-width: 1400px;
+    margin: 0 auto;
     padding: 32px 48px;
     flex: 1;
 }
