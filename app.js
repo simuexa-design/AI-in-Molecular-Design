@@ -619,6 +619,19 @@ function load3D(cid) {
         viewer.render();
         viewer.zoomTo();
         viewer.spin("y", 0.5);
+
+        // Extract atoms for Z-Matrix generation
+        try {
+            const model = viewer.getModel();
+            if (model) {
+                const atoms = model.selectedAtoms({});
+                if (atoms && atoms.length > 0) {
+                    generateZMatrix(atoms);
+                }
+            }
+        } catch (err) {
+            console.warn("[Z-Matrix] Could not extract atoms:", err.message);
+        }
     });
 }
 
@@ -1013,6 +1026,269 @@ async function fetchRDKitFeatures(smiles) {
         showRDKitError(`Backend unavailable: ${err.message}`);
     }
 }
+
+
+/* ================================================
+   Z-MATRIX GENERATION (Internal Coordinates)
+   ================================================ */
+
+/**
+ * Generate Z-Matrix from 3D Cartesian coordinates.
+ * Called after the 3D model is loaded by the viewer.
+ */
+function generateZMatrix(atoms) {
+    if (!atoms || atoms.length === 0) return;
+
+    console.log("[Z-Matrix] Generating from", atoms.length, "atoms");
+
+    const zRows = [];
+    const variables = {};
+
+    for (let i = 0; i < atoms.length; i++) {
+        const row = { idx: i + 1, elem: atoms[i].elem };
+
+        if (i >= 1) {
+            // Bond length to closest previous atom (or atom 0)
+            const refBond = findClosestPreceding(atoms, i);
+            row.bondRef = refBond + 1;
+            row.bondLength = distance3D(atoms[i], atoms[refBond]);
+            const varName = `r${i + 1}`;
+            variables[varName] = row.bondLength.toFixed(4);
+        }
+
+        if (i >= 2) {
+            // Bond angle: atom i — bondRef — angleRef
+            const refAngle = findAngleRef(atoms, i, row.bondRef - 1);
+            row.angleRef = refAngle + 1;
+            row.bondAngle = calcAngle3D(atoms[i], atoms[row.bondRef - 1], atoms[refAngle]);
+            const varName = `a${i + 1}`;
+            variables[varName] = row.bondAngle.toFixed(1);
+        }
+
+        if (i >= 3) {
+            // Torsion/dihedral angle
+            const refTorsion = findTorsionRef(atoms, i, row.bondRef - 1, row.angleRef - 1);
+            row.torsionRef = refTorsion + 1;
+            row.torsion = calcDihedral(atoms[i], atoms[row.bondRef - 1], atoms[row.angleRef - 1], atoms[refTorsion]);
+            const varName = `d${i + 1}`;
+            variables[varName] = row.torsion.toFixed(1);
+        }
+
+        zRows.push(row);
+    }
+
+    displayZMatrix(zRows, variables);
+}
+
+/** Euclidean distance between two atoms */
+function distance3D(a, b) {
+    return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2 + (a.z - b.z) ** 2);
+}
+
+/** Find closest preceding atom (for bond reference) */
+function findClosestPreceding(atoms, idx) {
+    let best = 0;
+    let bestDist = Infinity;
+    for (let j = 0; j < idx; j++) {
+        const d = distance3D(atoms[idx], atoms[j]);
+        if (d < bestDist) { bestDist = d; best = j; }
+    }
+    return best;
+}
+
+/** Find a suitable angle reference atom (different from bondRef) */
+function findAngleRef(atoms, idx, bondRefIdx) {
+    let best = -1;
+    let bestDist = Infinity;
+    for (let j = 0; j < idx; j++) {
+        if (j === bondRefIdx) continue;
+        const d = distance3D(atoms[bondRefIdx], atoms[j]);
+        if (d < bestDist) { bestDist = d; best = j; }
+    }
+    return best >= 0 ? best : 0;
+}
+
+/** Find a suitable torsion reference atom */
+function findTorsionRef(atoms, idx, bondRefIdx, angleRefIdx) {
+    let best = -1;
+    let bestDist = Infinity;
+    for (let j = 0; j < idx; j++) {
+        if (j === bondRefIdx || j === angleRefIdx) continue;
+        const d = distance3D(atoms[angleRefIdx], atoms[j]);
+        if (d < bestDist) { bestDist = d; best = j; }
+    }
+    if (best < 0) {
+        // Fallback: use first available atom
+        for (let j = 0; j < idx; j++) {
+            if (j !== bondRefIdx && j !== angleRefIdx) return j;
+        }
+        return 0;
+    }
+    return best;
+}
+
+/** Bond angle A-B-C (degrees) — angle at vertex B */
+function calcAngle3D(a, b, c) {
+    const vBA = { x: a.x - b.x, y: a.y - b.y, z: a.z - b.z };
+    const vBC = { x: c.x - b.x, y: c.y - b.y, z: c.z - b.z };
+    const dot = vBA.x * vBC.x + vBA.y * vBC.y + vBA.z * vBC.z;
+    const magBA = Math.sqrt(vBA.x ** 2 + vBA.y ** 2 + vBA.z ** 2);
+    const magBC = Math.sqrt(vBC.x ** 2 + vBC.y ** 2 + vBC.z ** 2);
+    if (magBA === 0 || magBC === 0) return 0;
+    const cosAngle = Math.max(-1, Math.min(1, dot / (magBA * magBC)));
+    return (Math.acos(cosAngle) * 180) / Math.PI;
+}
+
+/** Dihedral angle A-B-C-D (degrees) */
+function calcDihedral(a, b, c, d) {
+    const b1 = { x: b.x - a.x, y: b.y - a.y, z: b.z - a.z };
+    const b2 = { x: c.x - b.x, y: c.y - b.y, z: c.z - b.z };
+    const b3 = { x: d.x - c.x, y: d.y - c.y, z: d.z - c.z };
+
+    const cross = (u, v) => ({
+        x: u.y * v.z - u.z * v.y,
+        y: u.z * v.x - u.x * v.z,
+        z: u.x * v.y - u.y * v.x
+    });
+    const dot = (u, v) => u.x * v.x + u.y * v.y + u.z * v.z;
+    const mag = (u) => Math.sqrt(u.x ** 2 + u.y ** 2 + u.z ** 2);
+
+    const n1 = cross(b1, b2);
+    const n2 = cross(b2, b3);
+    const m1 = cross(n1, b2);
+
+    const magB2 = mag(b2);
+    if (magB2 === 0) return 0;
+
+    const x = dot(n1, n2);
+    const y = dot(m1, n2) / magB2;
+
+    return (Math.atan2(y, x) * 180) / Math.PI;
+}
+
+/* ================================================
+   Z-MATRIX UI DISPLAY
+   ================================================ */
+function displayZMatrix(rows, variables) {
+    const panel = document.getElementById("zmatrix-panel");
+    const tbody = document.getElementById("zmatrix-tbody");
+    const varGrid = document.getElementById("zmatrix-var-grid");
+
+    if (!panel || !tbody) return;
+
+    // Build table rows
+    tbody.innerHTML = "";
+    rows.forEach(row => {
+        const tr = document.createElement("tr");
+        const elemClass = `elem-${row.elem}`;
+
+        // Index
+        tr.innerHTML = `<td class="ztd-idx">${row.idx}</td>`;
+
+        // Atom
+        tr.innerHTML += `<td class="ztd-atom ${elemClass}">${row.elem}</td>`;
+
+        // Bond ref & length
+        if (row.bondLength !== undefined) {
+            tr.innerHTML += `<td class="ztd-ref">${row.bondRef}</td>`;
+            tr.innerHTML += `<td class="ztd-bond">${row.bondLength.toFixed(4)}</td>`;
+        } else {
+            tr.innerHTML += `<td class="ztd-empty">—</td><td class="ztd-empty">—</td>`;
+        }
+
+        // Angle ref & value
+        if (row.bondAngle !== undefined) {
+            tr.innerHTML += `<td class="ztd-ref">${row.angleRef}</td>`;
+            tr.innerHTML += `<td class="ztd-angle">${row.bondAngle.toFixed(1)}</td>`;
+        } else {
+            tr.innerHTML += `<td class="ztd-empty">—</td><td class="ztd-empty">—</td>`;
+        }
+
+        // Torsion ref & value
+        if (row.torsion !== undefined) {
+            tr.innerHTML += `<td class="ztd-ref">${row.torsionRef}</td>`;
+            tr.innerHTML += `<td class="ztd-torsion">${row.torsion.toFixed(1)}</td>`;
+        } else {
+            tr.innerHTML += `<td class="ztd-empty">—</td><td class="ztd-empty">—</td>`;
+        }
+
+        tbody.appendChild(tr);
+    });
+
+    // Build variable definitions
+    if (varGrid) {
+        varGrid.innerHTML = "";
+        Object.entries(variables).forEach(([name, val]) => {
+            const item = document.createElement("div");
+            item.className = "zvar-item";
+            item.innerHTML = `
+                <span class="zvar-name">${name}</span>
+                <span><span class="zvar-eq">=</span><span class="zvar-val">${val}</span></span>
+            `;
+            varGrid.appendChild(item);
+        });
+    }
+
+    // Store for copy
+    panel._zmatrixRows = rows;
+    panel._zmatrixVars = variables;
+
+    // Show the panel
+    panel.style.display = "flex";
+    console.log("[Z-Matrix] Displayed", rows.length, "rows");
+}
+
+/* ================================================
+   Z-MATRIX COPY TO CLIPBOARD (IQmol format)
+   ================================================ */
+function zmatrixToText(rows, variables) {
+    let lines = [];
+    lines.push("0  1");  // charge  multiplicity
+
+    rows.forEach(row => {
+        let line = row.elem;
+        if (row.bondLength !== undefined) {
+            line += `  ${row.bondRef}  r${row.idx}`;
+        }
+        if (row.bondAngle !== undefined) {
+            line += `  ${row.angleRef}  a${row.idx}`;
+        }
+        if (row.torsion !== undefined) {
+            line += `  ${row.torsionRef}  d${row.idx}`;
+        }
+        lines.push(line);
+    });
+
+    lines.push("Variables:");
+    Object.entries(variables).forEach(([name, val]) => {
+        lines.push(`${name}= ${val}`);
+    });
+
+    return lines.join("\n");
+}
+
+// Setup copy button
+document.addEventListener("DOMContentLoaded", () => {
+    const copyBtn = document.getElementById("zmatrix-copy-btn");
+    if (copyBtn) {
+        copyBtn.addEventListener("click", () => {
+            const panel = document.getElementById("zmatrix-panel");
+            if (!panel || !panel._zmatrixRows) return;
+
+            const text = zmatrixToText(panel._zmatrixRows, panel._zmatrixVars);
+            navigator.clipboard.writeText(text).then(() => {
+                copyBtn.textContent = "✓ Copied!";
+                copyBtn.classList.add("copied");
+                setTimeout(() => {
+                    copyBtn.textContent = "📋 Copy";
+                    copyBtn.classList.remove("copied");
+                }, 2000);
+            }).catch(err => {
+                console.error("Copy failed:", err);
+            });
+        });
+    }
+});
 
 
 

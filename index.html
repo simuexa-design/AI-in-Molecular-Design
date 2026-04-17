@@ -191,6 +191,53 @@
 
                     </div>
 
+                    <!-- Z-Matrix (Internal Coordinates) -->
+                    <div class="panel-card" id="zmatrix-panel" style="display:none;">
+                        <div class="panel-card-header">
+                            <span class="card-icon">📐</span>
+                            <span>Z-Matrix</span>
+                            <button id="zmatrix-copy-btn" class="zmatrix-copy-btn" title="Copy Z-Matrix to clipboard">📋 Copy</button>
+                        </div>
+                        <p class="card-hint">Internal coordinates representation — bond lengths (Å), bond angles (°), and torsional/dihedral angles (°).</p>
+
+                        <!-- Variable definitions summary -->
+                        <div class="zmatrix-vars" id="zmatrix-vars">
+                            <div class="zmatrix-var-header">
+                                <span class="zvar-icon">⚗️</span>
+                                <span>Variable Definitions</span>
+                            </div>
+                            <div class="zmatrix-var-grid" id="zmatrix-var-grid"></div>
+                        </div>
+
+                        <!-- Z-Matrix table -->
+                        <div class="zmatrix-table-wrap">
+                            <table class="zmatrix-table" id="zmatrix-table">
+                                <thead>
+                                    <tr>
+                                        <th class="zth-idx">#</th>
+                                        <th class="zth-atom">Atom</th>
+                                        <th class="zth-ref">Ref</th>
+                                        <th class="zth-bond">Bond (Å)</th>
+                                        <th class="zth-ref">Ref</th>
+                                        <th class="zth-angle">Angle (°)</th>
+                                        <th class="zth-ref">Ref</th>
+                                        <th class="zth-torsion">Torsion (°)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="zmatrix-tbody"></tbody>
+                            </table>
+                        </div>
+
+                        <!-- Charge & multiplicity -->
+                        <div class="zmatrix-footer" id="zmatrix-footer">
+                            <span class="zfoot-label">Charge</span>
+                            <span class="zfoot-val" id="zmatrix-charge">0</span>
+                            <span class="zfoot-sep">·</span>
+                            <span class="zfoot-label">Multiplicity</span>
+                            <span class="zfoot-val" id="zmatrix-mult">1</span>
+                        </div>
+                    </div>
+
                 </aside>
 
                 <!-- ── RIGHT PANEL: 3D Viewer ── -->

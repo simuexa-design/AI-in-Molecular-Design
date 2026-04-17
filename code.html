@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-variant": "#20262f",
+                    "primary": "#9effc8",
+                    "surface-container": "#151a21",
+                    "outline-variant": "#44484f",
+                    "on-error-container": "#ffa8a3",
+                    "on-primary": "#00643e",
+                    "background": "#0a0e14",
+                    "on-secondary-fixed-variant": "#0042c9",
+                    "secondary-dim": "#3367ff",
+                    "on-surface": "#f1f3fc",
+                    "on-tertiary": "#440900",
+                    "error-dim": "#d7383b",
+                    "on-error": "#490006",
+                    "on-surface-variant": "#a8abb3",
+                    "surface-container-high": "#1b2028",
+                    "secondary-fixed-dim": "#b3c1ff",
+                    "on-primary-fixed": "#00452a",
+                    "secondary-container": "#004ee8",
+                    "primary-fixed": "#1dfba5",
+                    "on-tertiary-fixed": "#360600",
+                    "tertiary-fixed-dim": "#ff7d5c",
+                    "surface-container-lowest": "#000000",
+                    "outline": "#72757d",
+                    "tertiary-container": "#fc3c00",
+                    "primary-container": "#1dfba5",
+                    "tertiary-dim": "#dc3300",
+                    "primary-fixed-dim": "#00ec9a",
+                    "surface-bright": "#262c36",
+                    "inverse-primary": "#006d45",
+                    "on-primary-container": "#005a38",
+                    "tertiary-fixed": "#ff9479",
+                    "tertiary": "#ff7350",
+                    "primary-dim": "#00ec9a",
+                    "on-secondary-fixed": "#002a88",
+                    "on-tertiary-fixed-variant": "#721600",
+                    "on-background": "#f1f3fc",
+                    "inverse-on-surface": "#51555d",
+                    "on-secondary-container": "#f8f7ff",
+                    "error-container": "#9f0519",
+                    "surface": "#0a0e14",
+                    "secondary-fixed": "#c5d0ff",
+                    "inverse-surface": "#f8f9ff",
+                    "error": "#ff716c",
+                    "surface-container-highest": "#20262f",
+                    "secondary": "#7c98ff",
+                    "on-tertiary-container": "#000000",
+                    "surface-tint": "#9effc8",
+                    "on-secondary": "#00195b",
+                    "surface-container-low": "#0f141a",
+                    "on-primary-fixed-variant": "#00653f",
+                    "surface-dim": "#0a0e14"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Space Grotesk"],
+                    "body": ["Inter"],
+                    "label": ["Space Grotesk"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .grainy-bg {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3C%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-body selection:bg-primary selection:text-on-primary">
+<!-- Shell: TopNavBar -->
+<header class="bg-slate-950 dark:bg-[#0a0e14] flex justify-between items-center w-full px-6 py-3 h-16 docked full-width top-0 z-50 fixed">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold tracking-tighter text-[#9effc8] font-headline">OBSIDIAN LABS</span>
+<nav class="hidden md:flex items-center gap-6">
+<a class="font-['Space_Grotesk'] tracking-wider uppercase text-sm font-medium text-slate-400 hover:text-[#9effc8] transition-colors duration-300 transition-transform scale-95 active:scale-90" href="#">Workbench</a>
+<a class="font-['Space_Grotesk'] tracking-wider uppercase text-sm font-medium text-[#9effc8] border-b-2 border-[#9effc8] pb-1 hover:text-[#9effc8] transition-colors duration-300 transition-transform scale-95 active:scale-90" href="#">Datasets</a>
+<a class="font-['Space_Grotesk'] tracking-wider uppercase text-sm font-medium text-slate-400 hover:text-[#9effc8] transition-colors duration-300 transition-transform scale-95 active:scale-90" href="#">Library</a>
+<a class="font-['Space_Grotesk'] tracking-wider uppercase text-sm font-medium text-slate-400 hover:text-[#9effc8] transition-colors duration-300 transition-transform scale-95 active:scale-90" href="#">History</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="bg-primary text-on-primary font-label uppercase tracking-widest text-xs px-4 py-2 font-bold hover:brightness-110 transition-all active:scale-95">Run Simulation</button>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-primary transition-colors">science</span>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-primary transition-colors">settings</span>
+<div class="w-8 h-8 overflow-hidden border border-outline-variant/30">
+<img alt="User Scientist Avatar" class="w-full h-full object-cover" data-alt="Close-up portrait of a serious male scientist wearing modern safety glasses in a dark high-tech lab environment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDzcETX_M_vHZGuuIGWa4g4iF-Nl5r3jfvC3Fo3v6NBW-HDlH9h7yFJwjyM6uAnU1pEGHObhX2ZC6jhBLVInNTl3-zzrmyrKZfV8AMY4kGFdGzHS_ME0H52q17Et1Cjrbrf_YMtGTEiWyNQ-GSk3EM2kSj-v44T4wtglZo0DL5Y2DHIjRJ84lT4Zg91QJFZz-lwqcZwNedvT6Daj9RxICJbYi0-YEiLrQCSGP7I11s_DiynTrxdYhvx6wwhl-TO3cmbvi9RfwQUiOY"/>
+</div>
+</div>
+</header>
+<!-- Shell: SideNavBar -->
+<aside class="h-screen w-64 fixed left-0 top-0 border-r border-[#20262f]/20 bg-[#0f141a] flex flex-col h-full pt-20 pb-6 hidden md:flex">
+<div class="px-6 mb-8">
+<h2 class="font-['Space_Grotesk'] text-xs font-bold uppercase tracking-widest text-primary">Lab Tools</h2>
+<p class="text-[10px] text-slate-500 font-label">V.2.0.4-Alpha</p>
+</div>
+<nav class="flex-1 space-y-1">
+<div class="text-slate-500 px-4 py-3 flex items-center gap-3 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-widest hover:bg-[#20262f] hover:text-slate-200 transition-all duration-200 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined text-sm">biotech</span> Selection Stage
+            </div>
+<div class="bg-[#151a21] text-[#9effc8] border-l-4 border-[#9effc8] px-4 py-3 flex items-center gap-3 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-widest cursor-default">
+<span class="material-symbols-outlined text-sm">account_tree</span> Structural Analysis
+            </div>
+<div class="text-slate-500 px-4 py-3 flex items-center gap-3 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-widest hover:bg-[#20262f] hover:text-slate-200 transition-all duration-200 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined text-sm">electric_bolt</span> Bond Energy
+            </div>
+<div class="text-slate-500 px-4 py-3 flex items-center gap-3 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-widest hover:bg-[#20262f] hover:text-slate-200 transition-all duration-200 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined text-sm">thermostat</span> Thermal Stability
+            </div>
+<div class="text-slate-500 px-4 py-3 flex items-center gap-3 font-['Space_Grotesk'] text-xs font-bold uppercase tracking-widest hover:bg-[#20262f] hover:text-slate-200 transition-all duration-200 ease-in-out cursor-pointer">
+<span class="material-symbols-outlined text-sm">ios_share</span> Export Data
+            </div>
+</nav>
+<div class="px-4 mt-auto space-y-4">
+<button class="w-full bg-[#151a21] border border-primary/20 text-primary font-label text-[10px] py-3 tracking-widest uppercase hover:bg-primary/10 transition-colors">
+                New Analysis
+            </button>
+<div class="pt-4 border-t border-outline-variant/10 space-y-2">
+<div class="flex items-center gap-3 px-2 text-slate-500 text-[10px] uppercase font-bold tracking-widest">
+<span class="material-symbols-outlined text-xs">memory</span> System Status
+                </div>
+<div class="flex items-center gap-3 px-2 text-slate-500 text-[10px] uppercase font-bold tracking-widest">
+<span class="material-symbols-outlined text-xs">help_outline</span> Help
+                </div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="md:pl-64 pt-16 min-h-screen relative overflow-hidden">
+<div class="grainy-bg absolute inset-0 pointer-events-none"></div>
+<div class="max-w-6xl mx-auto px-8 py-12 relative z-10">
+<!-- Header Section -->
+<header class="mb-12">
+<div class="flex items-center gap-2 mb-2">
+<span class="w-2 h-2 bg-primary animate-pulse"></span>
+<span class="text-primary font-label text-[10px] tracking-[0.2em] uppercase font-bold">Analysis Module // 002</span>
+</div>
+<h1 class="font-headline text-4xl md:text-5xl font-bold tracking-tighter text-on-surface uppercase italic">
+                    Compare <span class="text-primary">Molecules</span>
+</h1>
+<div class="h-px w-32 bg-primary/30 mt-4"></div>
+</header>
+<!-- Selection Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+<!-- Molecule 1 Selection -->
+<div class="group flex flex-col">
+<div class="flex justify-between items-end mb-4">
+<label class="font-headline text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">CHOOSE MOLECULE 1</label>
+<span class="text-[10px] font-label text-primary/40 uppercase">Awaiting Input...</span>
+</div>
+<div class="bg-surface-container border-l-2 border-primary/20 p-6 flex flex-col gap-6 relative transition-all duration-300 group-focus-within:border-primary group-focus-within:bg-surface-container-high">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+<input class="w-full bg-surface-container-lowest border-none pl-11 pr-4 py-3 text-sm font-body text-on-surface placeholder:text-outline-variant focus:ring-1 focus:ring-primary/50 transition-all" placeholder="Search by name, SMILES, or CID..." type="text"/>
+</div>
+<!-- Placeholder Preview Area -->
+<div class="aspect-square w-full bg-surface-container-lowest border border-outline-variant/10 flex flex-col items-center justify-center relative overflow-hidden">
+<!-- Background Grid Overlay -->
+<div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, #44484f 1px, transparent 1px); background-size: 20px 20px;"></div>
+<!-- Placeholder Icon/Wireframe -->
+<div class="relative z-10 text-center px-8">
+<div class="mb-6 relative inline-block">
+<span class="material-symbols-outlined text-7xl text-primary/10 select-none">biotech</span>
+<div class="absolute inset-0 border border-primary/20 scale-125 opacity-20"></div>
+</div>
+<p class="font-headline text-[10px] uppercase tracking-widest text-on-surface-variant leading-relaxed">
+                                    No structural data loaded.<br/>Enter criteria to visualize molecule.
+                                </p>
+</div>
+<!-- Decorative Corners -->
+<div class="absolute top-0 left-0 w-4 h-4 border-t border-l border-primary/30"></div>
+<div class="absolute top-0 right-0 w-4 h-4 border-t border-r border-primary/30"></div>
+<div class="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-primary/30"></div>
+<div class="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-primary/30"></div>
+</div>
+</div>
+</div>
+<!-- Molecule 2 Selection -->
+<div class="group flex flex-col">
+<div class="flex justify-between items-end mb-4">
+<label class="font-headline text-xs font-bold uppercase tracking-[0.2em] text-on-surface-variant">CHOOSE MOLECULE 2</label>
+<span class="text-[10px] font-label text-primary/40 uppercase">Awaiting Input...</span>
+</div>
+<div class="bg-surface-container border-l-2 border-primary/20 p-6 flex flex-col gap-6 relative transition-all duration-300 group-focus-within:border-primary group-focus-within:bg-surface-container-high">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+<input class="w-full bg-surface-container-lowest border-none pl-11 pr-4 py-3 text-sm font-body text-on-surface placeholder:text-outline-variant focus:ring-1 focus:ring-primary/50 transition-all" placeholder="Search by name, SMILES, or CID..." type="text"/>
+</div>
+<!-- Placeholder Preview Area -->
+<div class="aspect-square w-full bg-surface-container-lowest border border-outline-variant/10 flex flex-col items-center justify-center relative overflow-hidden">
+<div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(circle, #44484f 1px, transparent 1px); background-size: 20px 20px;"></div>
+<div class="relative z-10 text-center px-8">
+<div class="mb-6 relative inline-block">
+<span class="material-symbols-outlined text-7xl text-primary/10 select-none">matter</span>
+<div class="absolute inset-0 border border-primary/20 scale-125 opacity-20"></div>
+</div>
+<p class="font-headline text-[10px] uppercase tracking-widest text-on-surface-variant leading-relaxed">
+                                    No structural data loaded.<br/>Enter criteria to visualize molecule.
+                                </p>
+</div>
+<!-- Decorative Corners -->
+<div class="absolute top-0 left-0 w-4 h-4 border-t border-l border-primary/30"></div>
+<div class="absolute top-0 right-0 w-4 h-4 border-t border-r border-primary/30"></div>
+<div class="absolute bottom-0 left-0 w-4 h-4 border-b border-l border-primary/30"></div>
+<div class="absolute bottom-0 right-0 w-4 h-4 border-b border-r border-primary/30"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer CTA -->
+<div class="flex flex-col items-center justify-center pt-8 border-t border-outline-variant/10">
+<div class="flex items-center gap-12 mb-8">
+<div class="text-center">
+<div class="font-headline text-2xl font-bold text-on-surface-variant">--</div>
+<div class="font-label text-[10px] uppercase tracking-widest text-primary/60">Common Bonds</div>
+</div>
+<div class="text-center">
+<div class="font-headline text-2xl font-bold text-on-surface-variant">0%</div>
+<div class="font-label text-[10px] uppercase tracking-widest text-primary/60">Overlap Ratio</div>
+</div>
+<div class="text-center">
+<div class="font-headline text-2xl font-bold text-on-surface-variant">N/A</div>
+<div class="font-label text-[10px] uppercase tracking-widest text-primary/60">Sim. Index</div>
+</div>
+</div>
+<button class="group relative px-12 py-4 bg-surface-container-highest border border-outline-variant/30 text-outline-variant font-headline font-bold uppercase tracking-[0.4em] text-sm overflow-hidden disabled:cursor-not-allowed" disabled="">
+<div class="absolute inset-0 bg-primary translate-y-full group-enabled:group-hover:translate-y-0 transition-transform duration-300"></div>
+<span class="relative z-10 group-enabled:group-hover:text-on-primary transition-colors">START COMPARISON</span>
+</button>
+<p class="mt-4 text-[10px] font-label text-on-surface-variant/50 uppercase tracking-widest">Two molecular profiles must be initialized to proceed.</p>
+</div>
+</div>
+<!-- Decorative UI Elements -->
+<div class="fixed bottom-8 right-8 flex flex-col items-end gap-2 opacity-40 pointer-events-none">
+<div class="w-32 h-1 bg-primary/20"></div>
+<div class="w-16 h-1 bg-primary/40"></div>
+<div class="text-[8px] font-label text-primary uppercase tracking-[0.3em]">SECURE LAB SESSION // 294-X</div>
+</div>
+</main>
+</body></html>
