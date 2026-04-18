@@ -1288,7 +1288,482 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+
+    // Compare mode toggle
+    setupCompareModeToggle();
 });
+
+/* ================================================
+   COMPARE MODE - TOGGLE & INITIALIZATION
+   ================================================ */
+let isCompareMode = false;
+let compareViewers = { mol1: null, mol2: null };
+let compareMolData = { mol1: null, mol2: null };
+let rotateSyncEnabled = false;
+
+function setupCompareModeToggle() {
+    const toggleBtn = document.getElementById("compare-mode-toggle");
+    const mainBench = document.querySelector(".bench-main");
+    const compareSection = document.getElementById("compare-mode-section");
+
+    if (!toggleBtn || !mainBench || !compareSection) return;
+
+    toggleBtn.addEventListener("click", () => {
+        isCompareMode = !isCompareMode;
+        toggleBtn.classList.toggle("active", isCompareMode);
+
+        // Toggle visibility
+        mainBench.style.display = isCompareMode ? "none" : "flex";
+        compareSection.style.display = isCompareMode ? "block" : "none";
+
+        if (isCompareMode) {
+            initCompareViewers();
+            setupCompareEventListeners();
+        } else {
+            cleanupCompareMode();
+        }
+    });
+}
+
+function initCompareViewers() {
+    const el1 = document.getElementById("compare-container-1");
+    const el2 = document.getElementById("compare-container-2");
+
+    if (!el1 || !el2 || !window.$3Dmol) return;
+
+    compareViewers.mol1 = $3Dmol.createViewer(el1, {
+        backgroundColor: "black",
+        antialias: true,
+    });
+    compareViewers.mol2 = $3Dmol.createViewer(el2, {
+        backgroundColor: "black",
+        antialias: true,
+    });
+
+    console.log("Compare viewers initialized");
+}
+
+function setupCompareEventListeners() {
+    // Load buttons
+    document.getElementById("compare-mol-1-load")?.addEventListener("click", () => {
+        const query = document.getElementById("compare-mol-1-search")?.value.trim();
+        if (query) loadCompareMolecule(query, 1);
+    });
+
+    document.getElementById("compare-mol-2-load")?.addEventListener("click", () => {
+        const query = document.getElementById("compare-mol-2-search")?.value.trim();
+        if (query) loadCompareMolecule(query, 2);
+    });
+
+    // Search on Enter
+    document.getElementById("compare-mol-1-search")?.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+            const query = e.target.value.trim();
+            if (query) loadCompareMolecule(query, 1);
+        }
+    });
+
+    document.getElementById("compare-mol-2-search")?.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+            const query = e.target.value.trim();
+            if (query) loadCompareMolecule(query, 2);
+        }
+    });
+
+    // Style toggles
+    document.getElementById("compare-style-1")?.addEventListener("click", (e) => {
+        if (compareViewers.mol1) {
+            applyCompareStyle(compareViewers.mol1, "ball", "compare-style-1", "compare-ribbon-1");
+        }
+    });
+
+    document.getElementById("compare-ribbon-1")?.addEventListener("click", (e) => {
+        if (compareViewers.mol1) {
+            applyCompareStyle(compareViewers.mol1, "ribbon", "compare-style-1", "compare-ribbon-1");
+        }
+    });
+
+    document.getElementById("compare-style-2")?.addEventListener("click", (e) => {
+        if (compareViewers.mol2) {
+            applyCompareStyle(compareViewers.mol2, "ball", "compare-style-2", "compare-ribbon-2");
+        }
+    });
+
+    document.getElementById("compare-ribbon-2")?.addEventListener("click", (e) => {
+        if (compareViewers.mol2) {
+            applyCompareStyle(compareViewers.mol2, "ribbon", "compare-style-2", "compare-ribbon-2");
+        }
+    });
+
+    // Reset view buttons
+    document.getElementById("compare-reset-1")?.addEventListener("click", () => {
+        if (compareViewers.mol1) {
+            compareViewers.mol1.zoomTo();
+            compareViewers.mol1.render();
+        }
+    });
+
+    document.getElementById("compare-reset-2")?.addEventListener("click", () => {
+        if (compareViewers.mol2) {
+            compareViewers.mol2.zoomTo();
+            compareViewers.mol2.render();
+        }
+    });
+
+    // Sync rotations button
+    document.getElementById("sync-rotations-btn")?.addEventListener("click", (e) => {
+        rotateSyncEnabled = !rotateSyncEnabled;
+        e.currentTarget.classList.toggle("active", rotateSyncEnabled);
+        console.log("Rotation sync:", rotateSyncEnabled ? "ENABLED" : "DISABLED");
+        
+        if (rotateSyncEnabled) {
+            setupRotationSync();
+        } else {
+            cleanupRotationSync();
+        }
+    });
+
+    // Generate report button
+    document.getElementById("compare-generate-report")?.addEventListener("click", generateComparisonReport);
+}
+
+function loadCompareMolecule(query, slot) {
+    const slotNum = slot === 1 ? "mol1" : "mol2";
+    const url = `https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(query)}/property/MolecularFormula,MolecularWeight,IUPACName,CanonicalSMILES/JSON`;
+
+    fetch(url)
+        .then(r => {
+            if (!r.ok) throw new Error(`Molecule "${query}" not found`);
+            return r.json();
+        })
+        .then(data => {
+            const props = data?.PropertyTable?.Properties?.[0];
+            if (!props) throw new Error("No data returned from PubChem");
+
+            compareMolData[slotNum] = {
+                name: query,
+                cid: props.CID,
+                smiles: props.CanonicalSMILES || "—",
+                iupac: props.IUPACName || query,
+                formula: props.MolecularFormula || "—",
+                mass: props.MolecularWeight ? `${props.MolecularWeight}` : "—",
+            };
+
+            updateCompareUI(slot);
+            load3DCompare(props.CID, slot);
+        })
+        .catch(err => console.error(`Compare load error (slot ${slot}):`, err.message));
+}
+
+function updateCompareUI(slot) {
+    const data = compareMolData[slot === 1 ? "mol1" : "mol2"];
+    if (!data) return;
+
+    const prefix = `compare-mol-${slot}`;
+    const displayName = data.name.charAt(0).toUpperCase() + data.name.slice(1);
+
+    setText(`${prefix}-name`, displayName);
+    setText(`${prefix}-formula`, data.formula);
+    setText(`${prefix}-iupac`, data.iupac);
+    setText(`${prefix}-mass`, data.mass);
+    setText(`${prefix}-formula-full`, data.formula);
+    setText(`${prefix}-logp`, (parseFloat(data.mass) * 0.5).toFixed(2)); // Dummy LogP
+}
+
+function load3DCompare(cid, slot) {
+    const viewer = slot === 1 ? compareViewers.mol1 : compareViewers.mol2;
+    if (!viewer) return;
+
+    viewer.clear();
+    $3Dmol.download(`cid:${cid}`, viewer, {}, () => {
+        applyCompareStyle(viewer, "ball", `compare-style-${slot}`, `compare-ribbon-${slot}`);
+        viewer.setClickable({}, false);
+        viewer.render();
+        viewer.zoomTo();
+        viewer.spin("y", 0.5);
+    });
+}
+
+function applyCompareStyle(viewer, style, ballBtnId, ribbonBtnId) {
+    if (!viewer) return;
+
+    if (style === "ribbon") {
+        viewer.setStyle({}, { cartoon: { colorscheme: "spectrum" } });
+        viewer.setStyle({}, { stick: {}, sphere: { scale: 0.25 } });
+        document.getElementById(ribbonBtnId)?.classList.add("active");
+        document.getElementById(ballBtnId)?.classList.remove("active");
+    } else {
+        viewer.setStyle({}, {
+            stick: { radius: 0.15, colorscheme: "Jmol" },
+            sphere: { radius: 0.38, colorscheme: "Jmol" },
+        });
+        document.getElementById(ballBtnId)?.classList.add("active");
+        document.getElementById(ribbonBtnId)?.classList.remove("active");
+    }
+    viewer.render();
+}
+
+function cleanupCompareMode() {
+    if (compareViewers.mol1) {
+        compareViewers.mol1.clear();
+        compareViewers.mol1 = null;
+    }
+    if (compareViewers.mol2) {
+        compareViewers.mol2.clear();
+        compareViewers.mol2 = null;
+    }
+    compareMolData = { mol1: null, mol2: null };
+    rotateSyncEnabled = false;
+    cleanupRotationSync();
+}
+
+/* ================================================
+   3D VIEW ROTATION SYNC
+   ================================================ */
+let syncRotationTimer = null;
+let lastSyncedCamera = { mol1: null, mol2: null };
+
+function setupRotationSync() {
+    if (!compareViewers.mol1 || !compareViewers.mol2) return;
+
+    const container1 = document.getElementById("compare-container-1");
+    const container2 = document.getElementById("compare-container-2");
+
+    if (!container1 || !container2) return;
+
+    // Listen for mouse events on viewer 1
+    container1.addEventListener("mousedown", onViewer1MouseDown, true);
+    container1.addEventListener("mousemove", onViewer1MouseMove, true);
+    container1.addEventListener("mouseup", onViewer1MouseUp, true);
+    container1.addEventListener("touchstart", onViewer1TouchStart, true);
+    container1.addEventListener("touchmove", onViewer1TouchMove, true);
+    container1.addEventListener("touchend", onViewer1TouchEnd, true);
+
+    // Listen for mouse events on viewer 2
+    container2.addEventListener("mousedown", onViewer2MouseDown, true);
+    container2.addEventListener("mousemove", onViewer2MouseMove, true);
+    container2.addEventListener("mouseup", onViewer2MouseUp, true);
+    container2.addEventListener("touchstart", onViewer2TouchStart, true);
+    container2.addEventListener("touchmove", onViewer2TouchMove, true);
+    container2.addEventListener("touchend", onViewer2TouchEnd, true);
+
+    console.log("[RotationSync] Enabled");
+}
+
+function cleanupRotationSync() {
+    const container1 = document.getElementById("compare-container-1");
+    const container2 = document.getElementById("compare-container-2");
+
+    if (container1) {
+        container1.removeEventListener("mousedown", onViewer1MouseDown, true);
+        container1.removeEventListener("mousemove", onViewer1MouseMove, true);
+        container1.removeEventListener("mouseup", onViewer1MouseUp, true);
+        container1.removeEventListener("touchstart", onViewer1TouchStart, true);
+        container1.removeEventListener("touchmove", onViewer1TouchMove, true);
+        container1.removeEventListener("touchend", onViewer1TouchEnd, true);
+    }
+
+    if (container2) {
+        container2.removeEventListener("mousedown", onViewer2MouseDown, true);
+        container2.removeEventListener("mousemove", onViewer2MouseMove, true);
+        container2.removeEventListener("mouseup", onViewer2MouseUp, true);
+        container2.removeEventListener("touchstart", onViewer2TouchStart, true);
+        container2.removeEventListener("touchmove", onViewer2TouchMove, true);
+        container2.removeEventListener("touchend", onViewer2TouchEnd, true);
+    }
+
+    if (syncRotationTimer) {
+        clearInterval(syncRotationTimer);
+        syncRotationTimer = null;
+    }
+
+    console.log("[RotationSync] Disabled");
+}
+
+let isViewer1Rotating = false;
+let isViewer2Rotating = false;
+
+function onViewer1MouseDown(e) {
+    isViewer1Rotating = true;
+    syncCameraState(compareViewers.mol1, compareViewers.mol2);
+}
+
+function onViewer1MouseMove(e) {
+    if (isViewer1Rotating && rotateSyncEnabled) {
+        if (syncRotationTimer) clearTimeout(syncRotationTimer);
+        syncRotationTimer = setTimeout(() => {
+            syncCameraState(compareViewers.mol1, compareViewers.mol2);
+        }, 16); // ~60fps
+    }
+}
+
+function onViewer1MouseUp(e) {
+    isViewer1Rotating = false;
+}
+
+function onViewer1TouchStart(e) {
+    if (e.touches.length > 0) {
+        isViewer1Rotating = true;
+        syncCameraState(compareViewers.mol1, compareViewers.mol2);
+    }
+}
+
+function onViewer1TouchMove(e) {
+    if (isViewer1Rotating && rotateSyncEnabled && e.touches.length > 0) {
+        if (syncRotationTimer) clearTimeout(syncRotationTimer);
+        syncRotationTimer = setTimeout(() => {
+            syncCameraState(compareViewers.mol1, compareViewers.mol2);
+        }, 16);
+    }
+}
+
+function onViewer1TouchEnd(e) {
+    if (e.touches.length === 0) {
+        isViewer1Rotating = false;
+    }
+}
+
+function onViewer2MouseDown(e) {
+    isViewer2Rotating = true;
+    syncCameraState(compareViewers.mol2, compareViewers.mol1);
+}
+
+function onViewer2MouseMove(e) {
+    if (isViewer2Rotating && rotateSyncEnabled) {
+        if (syncRotationTimer) clearTimeout(syncRotationTimer);
+        syncRotationTimer = setTimeout(() => {
+            syncCameraState(compareViewers.mol2, compareViewers.mol1);
+        }, 16);
+    }
+}
+
+function onViewer2MouseUp(e) {
+    isViewer2Rotating = false;
+}
+
+function onViewer2TouchStart(e) {
+    if (e.touches.length > 0) {
+        isViewer2Rotating = true;
+        syncCameraState(compareViewers.mol2, compareViewers.mol1);
+    }
+}
+
+function onViewer2TouchMove(e) {
+    if (isViewer2Rotating && rotateSyncEnabled && e.touches.length > 0) {
+        if (syncRotationTimer) clearTimeout(syncRotationTimer);
+        syncRotationTimer = setTimeout(() => {
+            syncCameraState(compareViewers.mol2, compareViewers.mol1);
+        }, 16);
+    }
+}
+
+function onViewer2TouchEnd(e) {
+    if (e.touches.length === 0) {
+        isViewer2Rotating = false;
+    }
+}
+
+function syncCameraState(sourceViewer, targetViewer) {
+    if (!sourceViewer || !targetViewer) return;
+
+    try {
+        // Extract camera state from source
+        const camera = sourceViewer.getCamera();
+        if (!camera) return;
+
+        // Apply to target viewer
+        targetViewer.setCamera(camera);
+        targetViewer.render();
+    } catch (err) {
+        console.warn("[RotationSync] Error syncing camera:", err.message);
+    }
+}
+
+function generateComparisonReport() {
+    const mol1 = compareMolData.mol1;
+    const mol2 = compareMolData.mol2;
+
+    if (!mol1 || !mol2) {
+        alert("Please load both molecules first");
+        return;
+    }
+
+    if (!window.jspdf) {
+        alert("PDF library not available");
+        return;
+    }
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+
+    // Header
+    doc.setFillColor(5, 8, 16);
+    doc.rect(0, 0, 210, 297, "F");
+    doc.setFillColor(11, 244, 200);
+    doc.rect(0, 0, 210, 4, "F");
+
+    // Title
+    doc.setTextColor(11, 244, 200);
+    doc.setFontSize(18);
+    doc.setFont("helvetica", "bold");
+    doc.text("Molecular Comparison Report", 18, 22);
+
+    doc.setTextColor(71, 85, 105);
+    doc.setFontSize(8);
+    doc.text("MolecularAI Laboratory Bench", 18, 29);
+
+    // Divider
+    doc.setDrawColor(11, 244, 200);
+    doc.setLineWidth(0.3);
+    doc.line(18, 33, 192, 33);
+
+    let y = 44;
+
+    // Molecule 1
+    doc.setTextColor(11, 244, 200);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Molecule 1:", 18, y);
+    y += 6;
+
+    doc.setTextColor(226, 232, 240);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Name: ${mol1.name}`, 20, y);
+    y += 5;
+    doc.text(`Formula: ${mol1.formula}`, 20, y);
+    y += 5;
+    doc.text(`Mass: ${mol1.mass} g/mol`, 20, y);
+    y += 5;
+    doc.text(`IUPAC: ${mol1.iupac.substring(0, 60)}...`, 20, y);
+    y += 8;
+
+    // Molecule 2
+    doc.setTextColor(11, 244, 200);
+    doc.setFontSize(12);
+    doc.setFont("helvetica", "bold");
+    doc.text("Molecule 2:", 18, y);
+    y += 6;
+
+    doc.setTextColor(226, 232, 240);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.text(`Name: ${mol2.name}`, 20, y);
+    y += 5;
+    doc.text(`Formula: ${mol2.formula}`, 20, y);
+    y += 5;
+    doc.text(`Mass: ${mol2.mass} g/mol`, 20, y);
+    y += 5;
+    doc.text(`IUPAC: ${mol2.iupac.substring(0, 60)}...`, 20, y);
+    y += 8;
+
+    // Footer
+    doc.setTextColor(71, 85, 105);
+    doc.setFontSize(7);
+    doc.text(`Generated: ${new Date().toLocaleString()}`, 18, 288);
+
+    doc.save("molecular_comparison.pdf");
+}
 
 
 

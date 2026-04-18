@@ -23,7 +23,12 @@
                     <span class="logo-main">Molecular AI</span>
                 </div>
             </div>
-
+            <div class="header-controls">
+                <button id="compare-mode-toggle" class="mode-toggle" title="Toggle Compare Mode">
+                    <span class="toggle-icon">⇄</span>
+                    <span class="toggle-label">Compare Mode</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -272,6 +277,97 @@
             </div><!-- /bench-grid -->
         </div><!-- /bench-inner -->
     </main>
+
+    <!-- ══════════════════ COMPARISON MODE SECTION ══════════════════ -->
+    <section id="compare-mode-section" class="compare-mode-section" style="display: none;">
+        <div class="compare-container">
+            <!-- Comparison Header -->
+            <div class="compare-header">
+                <h2 class="compare-title">Comparison Mode</h2>
+                <div class="compare-actions">
+                    <button id="sync-rotations-btn" class="compare-action-btn" title="Sync 3D rotations">
+                        <span>🔗</span> Sync Rotations
+                    </button>
+                    <button id="compare-generate-report" class="compare-action-btn primary" title="Generate comparison report">
+                        <span>📊</span> Generate Report
+                    </button>
+                </div>
+            </div>
+
+            <!-- Comparison Grid -->
+            <div class="compare-grid">
+                <!-- Molecule 1 -->
+                <div class="compare-column">
+                    <div class="compare-mol-card">
+                        <div class="compare-search-box">
+                            <input type="text" id="compare-mol-1-search" class="compare-search-input" placeholder="Enter molecule name...">
+                            <button id="compare-mol-1-load" class="compare-search-btn">Load</button>
+                        </div>
+                        <div class="compare-mol-info">
+                            <h3 id="compare-mol-1-name">Molecule 1</h3>
+                            <p class="compare-mol-formula" id="compare-mol-1-formula">—</p>
+                            <p class="compare-mol-iupac" id="compare-mol-1-iupac">—</p>
+                        </div>
+                    </div>
+                    <div id="compare-container-1" class="compare-viewer"></div>
+                    <div class="compare-mol-controls">
+                        <button id="compare-style-1" class="compare-ctrl-btn active">Ball-and-Stick</button>
+                        <button id="compare-ribbon-1" class="compare-ctrl-btn">Wire Ribbon</button>
+                        <button id="compare-reset-1" class="compare-ctrl-btn">Reset View</button>
+                    </div>
+                    <div class="compare-mol-properties">
+                        <div class="prop-item">
+                            <span class="prop-label">Molar Mass</span>
+                            <span class="prop-value" id="compare-mol-1-mass">—</span>
+                        </div>
+                        <div class="prop-item">
+                            <span class="prop-label">Formula</span>
+                            <span class="prop-value mono" id="compare-mol-1-formula-full">—</span>
+                        </div>
+                        <div class="prop-item">
+                            <span class="prop-label">LogP</span>
+                            <span class="prop-value" id="compare-mol-1-logp">—</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Molecule 2 -->
+                <div class="compare-column">
+                    <div class="compare-mol-card">
+                        <div class="compare-search-box">
+                            <input type="text" id="compare-mol-2-search" class="compare-search-input" placeholder="Enter molecule name...">
+                            <button id="compare-mol-2-load" class="compare-search-btn">Load</button>
+                        </div>
+                        <div class="compare-mol-info">
+                            <h3 id="compare-mol-2-name">Molecule 2</h3>
+                            <p class="compare-mol-formula" id="compare-mol-2-formula">—</p>
+                            <p class="compare-mol-iupac" id="compare-mol-2-iupac">—</p>
+                        </div>
+                    </div>
+                    <div id="compare-container-2" class="compare-viewer"></div>
+                    <div class="compare-mol-controls">
+                        <button id="compare-style-2" class="compare-ctrl-btn active">Ball-and-Stick</button>
+                        <button id="compare-ribbon-2" class="compare-ctrl-btn">Wire Ribbon</button>
+                        <button id="compare-reset-2" class="compare-ctrl-btn">Reset View</button>
+                    </div>
+                    <div class="compare-mol-properties">
+                        <div class="prop-item">
+                            <span class="prop-label">Molar Mass</span>
+                            <span class="prop-value" id="compare-mol-2-mass">—</span>
+                        </div>
+                        <div class="prop-item">
+                            <span class="prop-label">Formula</span>
+                            <span class="prop-value mono" id="compare-mol-2-formula-full">—</span>
+                        </div>
+                        <div class="prop-item">
+                            <span class="prop-label">LogP</span>
+                            <span class="prop-value" id="compare-mol-2-logp">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- ══════════════════ FOOTER ══════════════════ -->
     <footer class="lab-footer">

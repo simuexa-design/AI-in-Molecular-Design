@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Mode - Test Console</title>
+    <style>
+        body {
+            background: #050810;
+            color: #e2e8f0;
+            font-family: 'Inter', sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #0f1525;
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        h1 {
+            color: #0bf4c8;
+            margin-top: 0;
+        }
+        .test-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: #080c18;
+            border-left: 3px solid #0bf4c8;
+            border-radius: 4px;
+        }
+        .test-item.pass {
+            border-left-color: #34d399;
+            background: rgba(52,211,153,0.05);
+        }
+        .test-item.fail {
+            border-left-color: #f43f5e;
+            background: rgba(244,63,94,0.05);
+        }
+        .status {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .status.pass::before {
+            content: "✓ PASS: ";
+            color: #34d399;
+        }
+        .status.fail::before {
+            content: "✗ FAIL: ";
+            color: #f43f5e;
+        }
+        code {
+            background: #0a0e14;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Compare Mode - Implementation Test</h1>
+        <p>Testing all Compare Mode components...</p>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const results = document.getElementById('results');
+        const tests = [];
+
+        function addTest(name, condition, details = '') {
+            const passed = !!condition;
+            const testEl = document.createElement('div');
+            testEl.className = `test-item ${passed ? 'pass' : 'fail'}`;
+            testEl.innerHTML = `
+                <div class="status ${passed ? 'pass' : 'fail'}">${name}</div>
+                <div>${details}</div>
+            `;
+            results.appendChild(testEl);
+            tests.push({ name, passed });
+        }
+
+        // Test 1: Check if DOM elements exist
+        addTest(
+            'DOM Elements',
+            document.getElementById('compare-mode-toggle'),
+            'Compare mode toggle button found'
+        );
+
+        // Test 2: Check if compare section exists
+        addTest(
+            'Compare Section',
+            document.getElementById('compare-mode-section'),
+            'Compare mode section exists'
+        );
+
+        // Test 3: Check containers
+        addTest(
+            '3D Viewer Containers',
+            document.getElementById('compare-container-1') && document.getElementById('compare-container-2'),
+            'Both viewer containers (1 & 2) found'
+        );
+
+        // Test 4: Check search inputs
+        addTest(
+            'Search Inputs',
+            document.getElementById('compare-mol-1-search') && document.getElementById('compare-mol-2-search'),
+            'Search inputs for both molecules found'
+        );
+
+        // Test 5: Check info displays
+        addTest(
+            'Molecule Info Cards',
+            document.getElementById('compare-mol-1-name') && document.getElementById('compare-mol-2-name'),
+            'Molecule name display elements found'
+        );
+
+        // Test 6: Check control buttons
+        addTest(
+            'Control Buttons',
+            document.getElementById('compare-style-1') && document.getElementById('compare-reset-1'),
+            'Style and reset buttons found'
+        );
+
+        // Test 7: Check action buttons
+        addTest(
+            'Action Buttons',
+            document.getElementById('sync-rotations-btn') && document.getElementById('compare-generate-report'),
+            'Sync rotations and report generation buttons found'
+        );
+
+        // Test 8: Check CSS classes
+        const toggleBtn = document.getElementById('compare-mode-toggle');
+        addTest(
+            'CSS Classes Applied',
+            toggleBtn && toggleBtn.className.includes('mode-toggle'),
+            `Toggle button has class: "${toggleBtn?.className}"`
+        );
+
+        // Test 9: Check for 3Dmol library
+        addTest(
+            '3Dmol.js Library',
+            window.$3Dmol,
+            '3Dmol library loaded and available'
+        );
+
+        // Test 10: Check for jsPDF library
+        addTest(
+            'jsPDF Library',
+            window.jspdf,
+            'jsPDF library loaded'
+        );
+
+        // Summary
+        const passed = tests.filter(t => t.passed).length;
+        const total = tests.length;
+        const summaryEl = document.createElement('div');
+        summaryEl.style.marginTop = '30px';
+        summaryEl.style.padding = '15px';
+        summaryEl.style.background = passed === total ? 'rgba(52,211,153,0.1)' : 'rgba(244,63,94,0.1)';
+        summaryEl.style.borderRadius = '4px';
+        summaryEl.style.borderLeft = `3px solid ${passed === total ? '#34d399' : '#f43f5e'}`;
+        summaryEl.innerHTML = `<strong style="color: ${passed === total ? '#34d399' : '#f43f5e'}">Test Results: ${passed}/${total} PASSED</strong>`;
+        results.appendChild(summaryEl);
+
+        console.log(`✓ Compare Mode Tests Complete: ${passed}/${total} passed`);
+    </script>
+</body>
+</html>

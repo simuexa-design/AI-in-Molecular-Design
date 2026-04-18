@@ -1227,10 +1227,322 @@ body::before {
 }
 
 /* ================================================
+   COMPARE MODE TOGGLE & SECTION
+   ================================================ */
+.header-controls {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.95rem;
+    background: rgba(11,244,200,0.05);
+    border: 1px solid rgba(11,244,200,0.15);
+    border-radius: 6px;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.mode-toggle:hover {
+    background: rgba(11,244,200,0.1);
+    border-color: rgba(11,244,200,0.3);
+    color: var(--accent);
+}
+
+.mode-toggle.active {
+    background: rgba(11,244,200,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 12px rgba(11,244,200,0.2);
+}
+
+.toggle-icon {
+    font-size: 1rem;
+}
+
+.toggle-label {
+    display: none;
+}
+
+@media (min-width: 600px) {
+    .toggle-label {
+        display: inline;
+    }
+}
+
+/* Comparison Section */
+.compare-mode-section {
+    flex: 1;
+    background: var(--bg);
+    padding: 1.5rem;
+    overflow-y: auto;
+    z-index: 50;
+}
+
+.compare-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.compare-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.compare-title {
+    font-family: var(--display);
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--text);
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+}
+
+.compare-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.compare-action-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    background: rgba(11,244,200,0.08);
+    border: 1px solid rgba(11,244,200,0.2);
+    border-radius: 6px;
+    color: var(--accent);
+    font-size: 0.75rem;
+    font-weight: 600;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.compare-action-btn:hover {
+    background: rgba(11,244,200,0.15);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(11,244,200,0.2);
+}
+
+.compare-action-btn.primary {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+}
+
+.compare-action-btn.primary:hover {
+    background: rgba(11,244,200,0.9);
+    box-shadow: 0 0 16px var(--accent-glow);
+}
+
+/* Comparison Grid */
+.compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.compare-column {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+/* Molecule Card */
+.compare-mol-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.compare-search-box {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.compare-search-input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-input);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.compare-search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(11,244,200,0.02);
+    box-shadow: 0 0 8px rgba(11,244,200,0.1);
+}
+
+.compare-search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.compare-search-btn {
+    padding: 0.5rem 1rem;
+    background: var(--accent);
+    border: none;
+    border-radius: 4px;
+    color: #000;
+    font-weight: 600;
+    font-family: var(--sans);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.compare-search-btn:hover {
+    background: rgba(11,244,200,0.9);
+    box-shadow: 0 0 12px var(--accent-glow);
+}
+
+.compare-mol-info {
+    padding: 0.75rem 0;
+}
+
+.compare-mol-info h3 {
+    font-family: var(--display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+}
+
+.compare-mol-formula {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    margin: 0.1rem 0;
+}
+
+.compare-mol-iupac {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin: 0.1rem 0;
+    max-height: 2.4em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Viewer */
+.compare-viewer {
+    flex: 1;
+    min-height: 400px;
+    background: #000;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Controls */
+.compare-mol-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.compare-ctrl-btn {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--text-dim);
+    font-size: 0.7rem;
+    font-weight: 600;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.compare-ctrl-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(11,244,200,0.05);
+}
+
+.compare-ctrl-btn.active {
+    background: rgba(11,244,200,0.1);
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* Properties */
+.compare-mol-properties {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.prop-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.prop-label {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.prop-value {
+    font-family: var(--mono);
+    font-size: 0.9rem;
+    color: var(--accent);
+    font-weight: 600;
+}
+
+.prop-value.mono {
+    font-family: var(--mono);
+}
+
+/* ================================================
    RESPONSIVE
    ================================================ */
 @media (max-width: 1024px) {
     .bench-grid { grid-template-columns: 300px 1fr; }
+    .compare-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .compare-mol-properties {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 860px) {
@@ -1244,4 +1556,15 @@ body::before {
     .toolbar-separator { display: none; }
     .toolbar-right { display: none; }
     .zmatrix-var-grid { grid-template-columns: 1fr; }
+    .compare-mode-section {
+        padding: 1rem;
+    }
+    .compare-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    .compare-viewer {
+        min-height: 300px;
+    }
 }
