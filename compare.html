@@ -17,221 +17,274 @@
 
 <body class="obsidian-lab">
 
-    <!-- ── NAVIGATION HEADER ── -->
-    <header class="lab-header">
-        <div class="header-inner">
-            <div class="lab-logo">
-                <a href="index.html" class="logo-link">
-                    <span class="logo-text">Molecular AI</span>
-                </a>
-            </div>
-            <div class="header-tools">
-                <div class="search-mini">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" id="global-search" placeholder="Global chemical search...">
-                </div>
-                <div class="tool-icons">
-                    <div class="user-avatar"></div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-
         <!-- ── MAIN CONTENT ── -->
         <main class="lab-content">
-            <header class="content-header">
-                <div class="view-title">
-                    <h1>COMPARISON VIEW</h1>
-                    <span class="view-sub">CROSS-REFERENCE ANALYSIS </span>
+
+            <!-- Dual Panel Layout -->
+            <div class="compare-panels">
+                
+                <!-- MOLECULE A -->
+                <div class="compare-panel">
+                    <div class="panel-header header-mol-a">
+                        <span class="panel-badge badge-a">Molecule A</span>
+                        <span class="panel-header-name" id="header-name-a">Loading...</span>
+                    </div>
+                    
+                    <div class="panel-search-row">
+                        <input type="text" id="input-1" class="compare-search-input" placeholder="Enter molecule name...">
+                        <button id="btn-load-1" class="compare-btn">Load</button>
+                    </div>
+                    
+                    <div class="viewer-box-wrapper">
+                        <div id="container-1" class="compare-viewer-box"></div>
+                        <div class="viewer-placeholder" id="placeholder-1">3D viewer</div>
+                    </div>
+                    
+                    <div class="compare-identity-card">
+                        <div class="cid-name" id="mol-name-1">Molecule A</div>
+                        <div class="cid-sub">
+                            <span id="mol-formula-1">—</span> · CID <span id="mol-cid-1">—</span>
+                        </div>
+                    </div>
+                    
+                    <div class="compare-props-grid">
+                        <div class="cprop-item"><span class="cprop-label">MW</span><span class="cprop-val" id="mol-mass-1">—</span></div>
+                        <div class="cprop-item"><span class="cprop-label">LogP</span><span class="cprop-val" id="logp-1">—</span></div>
+                        <div class="cprop-item"><span class="cprop-label">TPSA</span><span class="cprop-val" id="tpsa-1">—</span></div>
+                        <div class="cprop-item"><span class="cprop-label">HBD</span><span class="cprop-val" id="hbd-1">—</span></div>
+                        <div class="cprop-item"><span class="cprop-label">HBA</span><span class="cprop-val" id="hba-1">—</span></div>
+                        <div class="cprop-item"><span class="cprop-label">RotBonds</span><span class="cprop-val" id="rotb-1">—</span></div>
+                    </div>
                 </div>
-                <div class="header-actions">
-                    <button id="sync-viewports" class="btn-action">SYNC VIEWPORTS</button>
-                    <button id="generate-report" class="btn-primary">GENERATE REPORT</button>
+
+                <!-- MOLECULE B -->
+                <div class="compare-panel">
+                    <div class="panel-header header-mol-b">
+                        <span class="panel-badge badge-b">Molecule B</span>
+                        <span class="panel-header-name" id="header-name-b">Loading...</span>
+                    </div>
+                    
+                    <div class="panel-search-row">
+                        <input type="text" id="input-2" class="compare-search-input" placeholder="Enter molecule name...">
+                        <button id="btn-load-2" class="compare-btn">Load</button>
+                    </div>
+                    
+                    <div class="viewer-box-wrapper">
+                        <div id="container-2" class="compare-viewer-box"></div>
+                        <div class="viewer-placeholder" id="placeholder-2">3D viewer</div>
+                    </div>
+                    
+                    <div class="compare-identity-card">
+                        <div class="cid-name" id="mol-name-2">Molecule B</div>
+                        <div class="cid-sub">
+                            <span id="mol-formula-2">—</span> · CID <span id="mol-cid-2">—</span>
+                        </div>
+                    </div>
+                    
+                    <div class="compare-props-grid">
+                        <div class="cprop-item"><span class="cprop-label">MW</span><span class="cprop-val" id="mol-mass-2">—</span></div>
+                        <div class="cprop-item"><span class="cprop-label">LogP</span><span class="cprop-val" id="logp-2">—</span></div>
+                        <div class="cprop-item"><span class="cprop-label">TPSA</span><span class="cprop-val" id="tpsa-2">—</span></div>
+                        <div class="cprop-item"><span class="cprop-label">HBD</span><span class="cprop-val" id="hbd-2">—</span></div>
+                        <div class="cprop-item"><span class="cprop-label">HBA</span><span class="cprop-val" id="hba-2">—</span></div>
+                        <div class="cprop-item"><span class="cprop-label">RotBonds</span><span class="cprop-val" id="rotb-2">—</span></div>
+                    </div>
                 </div>
-            </header>
+            </div>
 
-            <div class="comparison-grid">
+            <!-- Sync Bar -->
+            <div class="sync-bar">
+                <label class="sync-checkbox-label">
+                    <input type="checkbox" id="sync-rotations-checkbox" checked>
+                    Sync 3D view rotation across both panels
+                </label>
+            </div>
 
-                <!-- MOLECULE SLOT 1 -->
-                <section class="molecule-slot" id="slot-1">
-                    <div class="mol-identity-card">
-                        <div class="mol-header">
-                            <div class="mol-name-group">
-                                <h2 class="mol-name" id="mol-name-1">Loading...</h2>
-                                <p class="mol-iupac" id="mol-iupac-1">---</p>
-                            </div>
-                            <div class="mol-search-box">
-                                <input type="text" id="input-1" placeholder="Swap molecule...">
-                                <span class="search-swap">⇌</span>
-                            </div>
+            <!-- Advanced Comparison Tools Dashboard -->
+            <div class="comparison-tools-card">
+                <div class="summary-header">
+                    <h3>Advanced Comparison Tools</h3>
+                    <span class="delta-badge">OBSIDIAN TOOLKIT</span>
+                </div>
+                
+                <div class="tools-grid">
+                    <!-- Tool 1: Structural/Geometric -->
+                    <div class="tool-section">
+                        <div class="tool-sec-header">
+                            <span class="tool-icon">📐</span>
+                            <h4>Structural / Geometric</h4>
                         </div>
-                        <div class="mol-meta-row">
-                            <span class="mol-formula" id="mol-formula-1">---</span>
-                            <span class="mol-mass" id="mol-mass-1">---</span>
+                        <p class="tool-desc">Physical shape deviation analysis.</p>
+                        <div class="tool-actions">
+                            <button class="tool-btn" id="btn-overlay" title="Visually align both structures">Overlay Molecules</button>
+                            <button class="tool-btn" id="btn-align" title="Lock frame of reference with 3 anchors">3-Point Align Tool</button>
+                            <button class="tool-btn" id="btn-measure" title="Activate distance/angle measurement UI">Measurement UI</button>
                         </div>
                     </div>
 
-                    <div class="viewer-container">
-                        <div class="viewer-header">
-                            <div class="badge-group">
-                                <span class="badge">BOND ANGLE CALCULATOR</span>
-                                <div class="atom-select-pill" id="pill-1">
-                                    <span class="s-dot">?</span> — <span class="s-dot">?</span> — <span
-                                        class="s-dot">?</span>
-                                    <span class="s-val">---°</span>
-                                </div>
-                            </div>
-                            <div class="theme-toggle">🌙</div>
+                    <!-- Tool 2: Energetic/Conformational -->
+                    <div class="tool-section">
+                        <div class="tool-sec-header">
+                            <span class="tool-icon">⚡</span>
+                            <h4>Energetic / Conformational</h4>
                         </div>
-                        <div id="container-1" class="mol-viewport"></div>
-                        <div class="viewer-footer">
-                            <button class="v-toggle active" id="ball-1">BALL-AND-STICK</button>
-                            <button class="v-toggle" id="ribbon-1">WIRE RIBBON</button>
+                        <p class="tool-desc">Lowest energy state determination.</p>
+                        <div class="tool-actions">
+                            <button class="tool-btn" id="btn-conformer" title="Generate and compare valid spatial arrangements">Conformer Search</button>
+                            <div class="tool-select-wrapper">
+                                <select class="tool-select" id="sel-forcefield" title="Select Force Field">
+                                    <option value="mmff94">MMFF94 Force Field</option>
+                                    <option value="uff">UFF Force Field</option>
+                                </select>
+                                <button class="tool-btn" id="btn-optimize">Optimize</button>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="section-label">RDKIT MOLECULAR DESCRIPTORS</div>
-                    <div class="descriptors-row">
-                        <div class="desc-item">
-                            <span class="d-label">LOGP</span>
-                            <span class="d-val" id="logp-1">-.-</span>
+                    <!-- Tool 3: Electronic Comparison -->
+                    <div class="tool-section">
+                        <div class="tool-sec-header">
+                            <span class="tool-icon">⚛️</span>
+                            <h4>Electronic Mapping</h4>
                         </div>
-                        <div class="desc-item">
-                            <span class="d-label">TPSA</span>
-                            <span class="d-val" id="tpsa-1">-.- Å²</span>
-                        </div>
-                        <div class="desc-item">
-                            <span class="d-label">LIPINSKI</span>
-                            <span class="d-val" id="lipinski-1">---</span>
+                        <p class="tool-desc">Reactivity and invisible property hot-spots.</p>
+                        <div class="tool-actions">
+                            <button class="tool-btn tooltip-btn" id="btn-esp" title="High-compute requirement">Map Electrostatic Potential (ESP)</button>
+                            <button class="tool-btn tooltip-btn" id="btn-orbitals" title="Requires external .WFN/.CUBE files">Compare HOMO/LUMO Orbitals</button>
                         </div>
                     </div>
 
-                    <div class="dual-props-row">
-                        <div class="props-card">
-                            <div class="section-label">PREDICTIONS</div>
-                            <div class="prop-stat">
-                                <span class="ps-label">Solubility</span>
-                                <span class="ps-badge" id="solub-1">---</span>
-                            </div>
-                            <div class="prop-stat">
-                                <span class="ps-label">Toxicity</span>
-                                <span class="ps-badge" id="tox-1">---</span>
-                            </div>
-                            <div class="prop-stat">
-                                <span class="ps-label">Drug-likeness</span>
-                                <span class="ps-val" id="drug-1">---</span>
-                            </div>
+                    <!-- Tool 4: Computational/Output -->
+                    <div class="tool-section">
+                        <div class="tool-sec-header">
+                            <span class="tool-icon">📊</span>
+                            <h4>Computational Analytics</h4>
                         </div>
-                        <div class="zmatrix-card">
-                            <div class="section-label">Z-MATRIX COORDINATES</div>
-                            <table class="z-table">
-                                <thead>
-                                    <tr>
-                                        <th>Atom</th>
-                                        <th>Dist</th>
-                                        <th>Angle</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="zmatrix-tbody-1">
-                                    <!-- Rows populated by JS -->
-                                </tbody>
-                            </table>
+                        <p class="tool-desc">Theoretical vs experimental verification.</p>
+                        <div class="tool-actions">
+                            <button class="tool-btn tooltip-btn" id="btn-vibrational" title="Requires external QM output">Simulate Vibrational IR</button>
+                            <button class="tool-btn" id="btn-file-compare" title="Open Babel conversion diff">.XYZ / .PDB File Diff</button>
                         </div>
                     </div>
-                </section>
+                </div>
+            </div>
 
-                <!-- MOLECULE SLOT 2 -->
-                <section class="molecule-slot" id="slot-2">
-                    <div class="mol-identity-card border-blue">
-                        <div class="mol-header">
-                            <div class="mol-name-group">
-                                <h2 class="mol-name text-blue" id="mol-name-2">Loading...</h2>
-                                <p class="mol-iupac" id="mol-iupac-2">---</p>
-                            </div>
-                            <div class="mol-search-box border-blue">
-                                <input type="text" id="input-2" placeholder="Swap molecule...">
-                                <span class="search-swap">⇌</span>
-                            </div>
-                        </div>
-                        <div class="mol-meta-row">
-                            <span class="mol-formula" id="mol-formula-2">---</span>
-                            <span class="mol-mass" id="mol-mass-2">---</span>
-                        </div>
+            <!-- Comparison Summary Table -->
+            <div class="comparison-summary-card">
+                <div class="summary-header">
+                    <h3>Comparison summary</h3>
+                    <span class="delta-badge">B − A delta</span>
+                </div>
+                
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th>Descriptor</th>
+                            <th>A · <span id="th-name-a">Molecule A</span></th>
+                            <th>B · <span id="th-name-b">Molecule B</span></th>
+                            <th>Delta (B−A)</th>
+                            <th>Unit</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Mol. weight</td>
+                            <td id="tbl-mw-a">—</td>
+                            <td id="tbl-mw-b">—</td>
+                            <td id="tbl-mw-d">—</td>
+                            <td class="td-unit">g/mol</td>
+                        </tr>
+                        <tr>
+                            <td>LogP</td>
+                            <td id="tbl-logp-a">—</td>
+                            <td id="tbl-logp-b">—</td>
+                            <td id="tbl-logp-d">—</td>
+                            <td class="td-unit">—</td>
+                        </tr>
+                        <tr>
+                            <td>TPSA</td>
+                            <td id="tbl-tpsa-a">—</td>
+                            <td id="tbl-tpsa-b">—</td>
+                            <td id="tbl-tpsa-d">—</td>
+                            <td class="td-unit">Å²</td>
+                        </tr>
+                        <tr>
+                            <td>H-bond donors</td>
+                            <td id="tbl-hbd-a">—</td>
+                            <td id="tbl-hbd-b">—</td>
+                            <td id="tbl-hbd-d">—</td>
+                            <td class="td-unit">count</td>
+                        </tr>
+                        <tr>
+                            <td>H-bond acceptors</td>
+                            <td id="tbl-hba-a">—</td>
+                            <td id="tbl-hba-b">—</td>
+                            <td id="tbl-hba-d">—</td>
+                            <td class="td-unit">count</td>
+                        </tr>
+                        <tr>
+                            <td>Rotatable bonds</td>
+                            <td id="tbl-rotb-a">—</td>
+                            <td id="tbl-rotb-b">—</td>
+                            <td id="tbl-rotb-d">—</td>
+                            <td class="td-unit">count</td>
+                        </tr>
+                        <tr>
+                            <td>Molar refractivity</td>
+                            <td id="tbl-mr-a">—</td>
+                            <td id="tbl-mr-b">—</td>
+                            <td id="tbl-mr-d">—</td>
+                            <td class="td-unit">cm³/mol</td>
+                        </tr>
+                        <tr>
+                            <td>Fsp3</td>
+                            <td id="tbl-fsp3-a">—</td>
+                            <td id="tbl-fsp3-b">—</td>
+                            <td id="tbl-fsp3-d">—</td>
+                            <td class="td-unit">fraction</td>
+                        </tr>
+                        <tr>
+                            <td>Aromatic rings</td>
+                            <td id="tbl-ar-a">—</td>
+                            <td id="tbl-ar-b">—</td>
+                            <td id="tbl-ar-d">—</td>
+                            <td class="td-unit">count</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="lipinski-grid">
+                    <div class="lipinski-col">
+                        <h4>Lipinski Ro5 · <span id="lip-name-a">Molecule A</span></h4>
+                        <ul id="lip-list-a">
+                            <li><span class="ldot"></span> MW &le; 500 g/mol &middot; <span id="lip-mw-a">—</span></li>
+                            <li><span class="ldot"></span> LogP &le; 5 &middot; <span id="lip-logp-a">—</span></li>
+                            <li><span class="ldot"></span> HBD &le; 5 &middot; <span id="lip-hbd-a">—</span></li>
+                            <li><span class="ldot"></span> HBA &le; 10 &middot; <span id="lip-hba-a">—</span></li>
+                        </ul>
                     </div>
-
-                    <div class="viewer-container">
-                        <div class="viewer-header">
-                            <div class="badge-group">
-                                <span class="badge text-blue">BOND ANGLE CALCULATOR</span>
-                                <div class="atom-select-pill border-blue" id="pill-2">
-                                    <span class="s-dot bg-blue">?</span> — <span class="s-dot bg-blue">?</span> — <span
-                                        class="s-dot bg-blue">?</span>
-                                    <span class="s-val text-blue">---°</span>
-                                </div>
-                            </div>
-                            <div class="theme-toggle">🌙</div>
-                        </div>
-                        <div id="container-2" class="mol-viewport"></div>
-                        <div class="viewer-footer">
-                            <button class="v-toggle active blue-active" id="ball-2">BALL-AND-STICK</button>
-                            <button class="v-toggle" id="ribbon-2">WIRE RIBBON</button>
-                        </div>
+                    <div class="lipinski-col">
+                        <h4>Lipinski Ro5 · <span id="lip-name-b">Molecule B</span></h4>
+                        <ul id="lip-list-b">
+                            <li><span class="ldot"></span> MW &le; 500 g/mol &middot; <span id="lip-mw-b">—</span></li>
+                            <li><span class="ldot"></span> LogP &le; 5 &middot; <span id="lip-logp-b">—</span></li>
+                            <li><span class="ldot"></span> HBD &le; 5 &middot; <span id="lip-hbd-b">—</span></li>
+                            <li><span class="ldot"></span> HBA &le; 10 &middot; <span id="lip-hba-b">—</span></li>
+                        </ul>
                     </div>
-
-                    <div class="section-label text-blue-muted">RDKIT MOLECULAR DESCRIPTORS</div>
-                    <div class="descriptors-row">
-                        <div class="desc-item">
-                            <span class="d-label">LOGP</span>
-                            <span class="d-val" id="logp-2">-.-</span>
-                        </div>
-                        <div class="desc-item">
-                            <span class="d-label">TPSA</span>
-                            <span class="d-val" id="tpsa-2">-.- Å²</span>
-                        </div>
-                        <div class="desc-item">
-                            <span class="d-label">LIPINSKI</span>
-                            <span class="d-val" id="lipinski-2">---</span>
-                        </div>
-                    </div>
-
-                    <div class="dual-props-row">
-                        <div class="props-card">
-                            <div class="section-label text-blue-muted">PREDICTIONS</div>
-                            <div class="prop-stat">
-                                <span class="ps-label">Solubility</span>
-                                <span class="ps-badge" id="solub-2">---</span>
-                            </div>
-                            <div class="prop-stat">
-                                <span class="ps-label">Toxicity</span>
-                                <span class="ps-badge" id="tox-2">---</span>
-                            </div>
-                            <div class="prop-stat">
-                                <span class="ps-label">Drug-likeness</span>
-                                <span class="ps-val" id="drug-2">---</span>
-                            </div>
-                        </div>
-                        <div class="zmatrix-card">
-                            <div class="section-label text-blue-muted">Z-MATRIX COORDINATES</div>
-                            <table class="z-table">
-                                <thead>
-                                    <tr>
-                                        <th>Atom</th>
-                                        <th>Dist</th>
-                                        <th>Angle</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="zmatrix-tbody-2">
-                                    <!-- Rows populated by JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </section>
-
+                </div>
             </div>
         </main>
 
+    <!-- Native Modals -->
+    <div id="modal-backdrop" class="modal-backdrop"></div>
+    <div id="modal-window" class="modal-window">
+        <div class="modal-header">
+            <h3 id="modal-title">Analytics</h3>
+            <button id="modal-close">&times;</button>
+        </div>
+        <div class="modal-body" id="modal-content"></div>
+    </div>
 
     <script src="compare.js"></script>
 </body>
